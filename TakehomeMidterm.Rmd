@@ -1,7 +1,7 @@
 ---
 title: "Takehome Midterm"
-author: "Spectacular Student"
-date: "04 Mar 2020"
+author: "Riley McDonnell"
+date: "23 Mar 2020"
 output:
   github_document:
     toc: true
@@ -16,8 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 For the takehome midterm you will have 48 hours to complete the objectives listed below. The deadline for submission is 18 March 2020 at 2pm EST.
 
-Date/Time started:
-Date/Time completed:
+Date/Time started: Sunday March 23rd 11:30 am
+Date/Time completed: Sunday March 23rd 
 
 You will be graded on the following criteria:
 
@@ -42,7 +42,7 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 
 ## Objectives for Midterm Exam
 
-* [ ] Import, clean, merge data tables
+* [X] Import, clean, merge data tables
 * [ ] Present graphical summary of Dengue incidence data
 * [ ] Data exploration of potential explanatory variables
 * [ ] Test Benchmark model of Dengue incidence
@@ -193,7 +193,68 @@ summarise(cases = sum(total_cases))
 ```
 The values are pretty close, but not 100% exact. Most years are pretty close but 2001 is off by about 300 based on the paper's numbers. Due to the fact that most values are similar I will proceed. 
 
-Next I need to remove the NAs
+Next I need to remove the NAs to clean the data. First I need to check to see how many varaibles are impacted by NAs.
+
+```{r check NAs}
+
+apply(dengue_features_train, 2, function(x) any(is.na(x)))
+apply(dengue_labels_train, 2, function(x) any(is.na(x)))
+
+```
+Because it will be difficult to go between both data sets when the information is helpful for both cities it might be best to merge the data sets.
+```{r merge}
+data <- merge(dengue_features_train, dengue_labels_train)
+length(data)
+nrow(data)
+```
+Because 3 of the varaibles were the same in the data sets they were merged to make 25 variables with 1456 observations, which is exactly the number of observations from both sets so nothing went missing.
+```{r checking new data frame}
+str(data)
+```
+The data still looks the same so the merge worked. Next we need to remove the NAs from this new data set. First we need to see what NAs are still present and for what variables.
+
+```{r NAs}
+apply(data, 2, function(x) any(is.na(x)))
+```
+Because we want to properly sort this data we need to sort by variables that currently don't have any NAs, so I'll group by city and arrange by week_start_date by using the fill code that was proposed in the instructions.
+
+```{r remove NAs}
+clean.data <- data %>%
+ group_by(city) %>%
+ arrange(week_start_date) %>%
+ tidyr::fill(ndvi_ne, ndvi_nw, ndvi_se, ndvi_sw,
+             precipitation_amt_mm,
+             reanalysis_air_temp_k,
+             reanalysis_avg_temp_k,
+             reanalysis_dew_point_temp_k,
+             reanalysis_max_air_temp_k,
+             reanalysis_min_air_temp_k,
+             reanalysis_precip_amt_kg_per_m2,
+             reanalysis_relative_humidity_percent,
+             reanalysis_sat_precip_amt_mm,
+             reanalysis_specific_humidity_g_per_kg,
+             reanalysis_tdtr_k,
+             station_avg_temp_c,
+             station_diur_temp_rng_c,
+             station_max_temp_c,
+             station_min_temp_c,
+             station_precip_mm,
+             .direction = "up") 
+```
+Now time to see if it removed the NAs.
+
+```{r checking NAs}
+apply(full_data, 2, function(x) any(is.na(x)))
+```
+All false which is a great thing to see and we can proceed to the next step! Just to confirm that we didn't lose anything from the start of this process to the very end.
+
+```{r checking}
+
+summary(dengue_features_train)
+summary(dengue_labels_train)
+summary(clean.data)
+```
+Values still look good and we've successfully removed the NAs, time to proceed.
 
 ## (2) What is the average number of cases of Dengue for each week of the year for each city?
 
