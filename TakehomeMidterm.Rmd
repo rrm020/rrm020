@@ -145,6 +145,56 @@ Although there are dplyr functions for data frame merging, the base `merge()` fu
 
 Check out the `tidyr::fill()` function for one way to take care of NAs.
 
+```{r data wrangling}
+str(dengue_features_train)
+str(dengue_labels_train)
+
+nrow(dengue_features_train)
+nrow(dengue_labels_train)
+
+summary(dengue_features_train)
+summary(dengue_labels_train)
+
+
+head(dengue_features_train)
+tail(dengue_features_train)
+
+
+head(dengue_labels_train)
+tail(dengue_labels_train)
+
+
+dengue_features_train %>% dplyr::filter(city=="sj") %>% nrow()
+dengue_labels_train %>% dplyr::filter(city=="sj") %>% nrow()
+dengue_features_train %>% dplyr::filter(city=="iq") %>% nrow()
+dengue_labels_train %>% dplyr::filter(city=="iq") %>% nrow()
+```
+After taking a look at the data for the features and the labels there are some similarities and differences between the two. City is character type for both data sets, but the week start date in the features data set is date type. Other than that exception all other variables are numerical and are quantitative. The city names are "sj" and "iq" which make the data a bit easier to sort and filter, which is what I did at the end of my code above using the helpful package dplyr. As for checking the data, the features data frame has 24 variables and the labels data frame has 4 variables. Both data frames have 1456 rows/observations. Both data frames also have the variables city, year, and weekofyear. By looking at the beginning and end of the data, at least one NA is visible so I will need to remove NA's in future steps. 
+
+To continue with my analysis I will first need to confirm that this data is consistent with other sources. With San Juan, Puerto Rico and Iquitos, Peru being our two cities I looked for papers about dengue fever reports in both locations. The first paper was published in 2015 and looks at cases in Puerto Rico over the recent epidemics in 2007, 2010, and 2012-13. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4587385/
+Because this deals with cases by year I will want to look at how San Juan compares by year to the values within the paper.
+
+```{r checking sj}
+dengue_labels_train %>%
+ dplyr::filter(city=="sj") %>%
+ group_by(year) %>%
+ summarise(cases = sum(total_cases))
+```
+The paper's general message is that the values in Puerto Rico have been worsening over time and have years where the number of cases vary. The values in the paper are significantly higher because they represent that of an entire country. The data set we are analyzing is consistent with more recent studies and I think it is safe to proceed with the San Juan values.
+
+Next I will look at a paper written about dengue fever in Iquitos, Peru that studied the long term effects of dengue fever as well as its seasonality. They have data from 2000 to 2010 which lists the cases and strain, as well as the total number of cases per year. I will need to compare the cases per year from our data set.
+https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0003003
+
+```{r checking iq}
+dengue_labels_train %>%
+dplyr::filter(city=="iq") %>%
+group_by(year) %>%
+summarise(cases = sum(total_cases))
+```
+The values are pretty close, but not 100% exact. Most years are pretty close but 2001 is off by about 300 based on the paper's numbers. Due to the fact that most values are similar I will proceed. 
+
+Next I need to remove the NAs
+
 ## (2) What is the average number of cases of Dengue for each week of the year for each city?
 
 Provide a publication-quality graphic to present this comparison. 
