@@ -1,0 +1,33 @@
+---
+title: "Homework1_rrm020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if (!require("readxl")) install.packages("readxl"); library(readxl)
+if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+getwd()
+```
+First the data set we will be using must be loaded in. This comes from the paper: 
+
+Heldstab SA, Isler K, van Schaik CP (2018) Data from: Hibernation constrains brain size evolution in mammals. Dryad Digital Repository. https://doi.org/10.5061/dryad.753d06g
+
+```{r Import Data}
+Supplementary_material <- read_excel("Supplementary material.xlsx")
+```
+Now we have loaded in the materials to then proceed with manipulating them to evidence to support both the known hypothesis addressed by the author, as well as an alternative hypothesis. 
+```{r Load and summarize dataset}
+head(Supplementary_material)
+data(Supplementary_material)
+summary(Supplementary_material)
+
+```
+To begin gaining information about the data set, first we must look at how the variables are related by starting with exploratory data analysis. The authors hypothesis is that hibernation constrains brain size evolution in mammals, so first we must explore that relationship. 
+```{r view}
+Supplementary_material
+```
+```{r Contingency table}
+table()
+```
+
