@@ -449,7 +449,7 @@ xlab("Date") +
 
 ### Presentation
 
-We can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation. There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases deacreases.
+We can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation. There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases deacreases. After looking at the correlation between the precipitation and temperature, I looked at different graphs showing cases verus the variables which clearly show that dengue fever tends to come in waves. Dengue presence has been associated with variations in climate. Increased rainfall supports mosquito habitat availability, and high temperatures promote mosquito development.Dengue epidemics often occur seasonally, with more cases found during wetter and warmer months.
 
 
 
