@@ -43,13 +43,7 @@ if (!require("UsingR")) install.packages("UsingR")
 library(UsingR)
 # need for data exploration and distribution testing
 
-if (!require("githubinstall")) install.packages("githubinstall")
-library(githubinstall)
-# need in order to use githubinstall in next package loading
 
-if (!require("ggcorrplot")) githubinstall("kassambara/ggcorrplot")
-library(ggcorrplot)
-# need to visualize correlations
 ```
 
 ## Objectives for Midterm Exam
@@ -410,7 +404,6 @@ temp.case <- lm(mean.temp ~ clean.data$total_cases)
 summary(temp.case)
 
 ```
-Here we can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation.
 
 ```{r Cases by Precipitation}
 ggplot() + ggtitle("Number of Cases by Mean Precipitation") +
@@ -424,8 +417,6 @@ ggplot() + ggtitle("Number of Cases by Mean Precipitation") +
 precip.case <- lm(mean.precip ~ clean.data$total_cases)
 summary(precip.case)
 ```
-There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases deacreases. Now we can begin to explore the data below.
-
 ### Exploration
 
 Explore the data here.
@@ -457,6 +448,8 @@ xlab("Date") +
 ```
 
 ### Presentation
+
+We can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation. There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases deacreases.
 
 
 
@@ -512,8 +505,21 @@ sj_model <- glm.nb(data = sj_only, total_cases ~
                      station_min_temp_c)
 summary(sj_model)
 ```
+Here I looked at the cities individually with the benchmark variables to see how the benchmark can be imporved. To improve the benchmark I won't remove anything because that would be creating a whole new benchmark so I aim to just add varaibles to improve it. 
 
-```{r}
+In the code below is my final "better benchmark" because the dropterm tests have lower AIC values for the variables I added than the current, meaning they make the model better than it would be without them.
+```{r better benchmark}
+
+cities.benchmark <- glm.nb(data = clean.data, total_cases ~
+                    reanalysis_specific_humidity_g_per_kg +
+                    reanalysis_dew_point_temp_k +
+                    station_avg_temp_c +
+                    station_min_temp_c)
+summary(cities.benchmark)
+dropterm(cities.benchmark)
+
+# this is the final better benchmark based on adding things to the original one above.
+
 better.benchmark <- glm.nb(data = clean.data, total_cases ~
                                   reanalysis_specific_humidity_g_per_kg +
                                   reanalysis_dew_point_temp_k +
@@ -527,5 +533,15 @@ dropterm(better.benchmark)
 ```
 
 # Acknowledgements
+Just like to shoutout Dr. Field for providing really helpful labs that made this possible because I came into this class with very basic R knowledge, I'm amazed at what I can make now!
 
+ 
 Cite online sources used.
+https://shaulab.github.io/DrivenData/DengAI/Benchmark.html
+https://www.statmethods.net/graphs/scatterplot.html
+https://www.statmethods.net/advstats/glm.html
+http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
+https://www.statmethods.net/stats/correlations.html
+ggplot Cheatsheet from Class Repo
+
+
