@@ -383,24 +383,34 @@ Here is the scatterplot to visualize the correlation between the transformed dat
 temp.precip <- lm(mean.precip ~ mean.temp)
 summary(temp.precip)
 ```
-The p value here of .000519 shows us that it is significant, but the adjusted r squared value of 0.0075 tells us there is little correlation between average temperature and avereage precipitation. This is also clearly indicated on the scatterplot above with values being very spread out. Although there was not a correlation between those variables, we can now look at average precipitation by cases and average temperaure by cases. 
+The p value here of .000519 shows us that it is significant, but the adjusted r-squared value of 0.0075 tells us there is little correlation between average temperature and avereage precipitation. This is also clearly indicated on the scatterplot above with values being very spread out. Although there was not a correlation between those variables, we can now look at average precipitation by cases and average temperaure by cases. 
 
 ```{r Cases by Temp}
+ggplot() + ggtitle("Number of Cases by Mean Temperature") +
+ aes(x = mean.temp, y = clean.data$total_cases) +
+ geom_point() + theme_bw() + scale_x_continuous(name = "Natural Log of Mean Temperature") + scale_y_continuous(name = "Total Cases") +
+ geom_smooth(method=lm , color="black", se=TRUE) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+This graph needs to exclude outliers because these values are far to large to be included. To find the cut off or the upper limit we must look at the IQR by summarizing the data.
+```{r summary}
 summary(clean.data$total_cases)
+```
+This means the value for the upper limit will be: 28+1.5(28-5) = 62.5. so a new scatterplot will be made to remove values above 62.5.
+```{r}
 ggplot() + ggtitle("Number of Cases by Mean Temperature") +
  aes(x = mean.temp, y = clean.data$total_cases) +
  geom_point() + theme_bw() + scale_x_continuous(name = "Natural Log of Mean Temperature") + scale_y_continuous(name = "Total Cases") + coord_cartesian(ylim = c(0, 62.5)) +
  geom_smooth(method=lm , color="black", se=TRUE) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-```
 
+```
+Much better!
 
 ```{r Statistics on Temp and Cases}
 temp.case <- lm(mean.temp ~ clean.data$total_cases)
 summary(temp.case)
-cor(mean.temp, clean.data$total_cases, method = c("spearman"), use = "complete.obs")
-cor(mean.temp, clean.data$total_cases, method = c("pearson"), use = "complete.obs")
-```
 
+```
+Here we can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation.
 
 ```{r Cases by Precipitation}
 ggplot() + ggtitle("Number of Cases by Mean Precipitation") +
@@ -413,10 +423,8 @@ ggplot() + ggtitle("Number of Cases by Mean Precipitation") +
 ```{r Statistics on Precipitation and Cases}
 precip.case <- lm(mean.precip ~ clean.data$total_cases)
 summary(precip.case)
-cor(mean.precip, clean.data$total_cases, method = c("spearman"), use = "complete.obs")
 ```
-
-
+There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases deacreases. Now we can begin to explore the data below.
 
 ### Exploration
 
@@ -440,6 +448,7 @@ You should use the model selection approach that we have used in BIOL 364, inste
 The total_cases outcome variable is a count - statistically it is a binomial variable that has been summed up over a period of time (a week, in this case). 
 Generalized linear models should use a negative binomial distribution (as opposed to a Gaussian distribution, which is what `glm()` assumes) for this type of data.
 To fit a negative binomial distribution use `glm.nb()` from the package `MASS` instead of the `glm()` function from `stats`.
+ 
  
 ## (5) Extend the Benchmark model
 
