@@ -38,6 +38,18 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 # tidyverse is needed for ggplot2, readr, and dplyr
 # Always load tidyverse last so that its functions will not get masked by other packages
 # It is also good practice to specify dplyr::filter() and dplyr::select() functions
+
+if (!require("UsingR")) install.packages("UsingR")
+library(UsingR)
+# need for data exploration and distribution testing
+
+if (!require("githubinstall")) install.packages("githubinstall")
+library(githubinstall)
+# need in order to use githubinstall in next package loading
+
+if (!require("ggcorrplot")) githubinstall("kassambara/ggcorrplot")
+library(ggcorrplot)
+# need to visualize correlations
 ```
 
 ## Objectives for Midterm Exam
@@ -244,12 +256,11 @@ clean.data <- data %>%
 Now time to see if it removed the NAs.
 
 ```{r checking NAs}
-apply(full_data, 2, function(x) any(is.na(x)))
+apply(clean.data, 2, function(x) any(is.na(x)))
 ```
 All false which is a great thing to see and we can proceed to the next step! Just to confirm that we didn't lose anything from the start of this process to the very end.
 
 ```{r checking}
-
 summary(dengue_features_train)
 summary(dengue_labels_train)
 summary(clean.data)
@@ -263,11 +274,103 @@ The graph should span a single year, with the average incidence for each week of
 You are encouraged to explore options, but only your final graph in this section will be used to evaluate this objective.
 Consider the most effective way to illustrate any trends or important comparisons within the data.
 
+```{r trying options}
+clean.data %>%
+ ggplot() +
+ aes(weekofyear, total_cases, group = weekofyear, color = city) +
+ geom_point() +
+ theme_classic()
+
+# this graph makes it clear which city is which and the number of cases per week of the year, although it might be more helpful to look just at the means because those values will be better for future comparisons
+
+
+clean.data %>%
+ group_by(city, weekofyear) %>%
+ mutate(average_cases = mean(total_cases)) %>%
+ ggplot() +
+ aes(weekofyear, average_cases, group = weekofyear, color = city) +
+ geom_point() +
+ theme_classic()
+
+# this looks a lot better and is much easier to read since you can clearly see each city's results, although this is helpful were going to need to use some error bars to make this more accurate and informative.
+
+
+plot.data <- clean.data %>%
+ group_by(city, weekofyear) %>%
+ summarise(average_cases = mean(total_cases),
+           sd_cases = sd(total_cases),
+           n = length(total_cases)) %>%
+ mutate(se = sd_cases/(sqrt(n))) %>%
+ mutate(upper = average_cases+se) %>%
+ mutate(lower = average_cases-se)
+
+
+plot.data %>%
+ ggplot() +
+ aes(x = weekofyear,
+     y = average_cases,
+     ymin = lower,
+     ymax = upper,
+     group = weekofyear,
+     color = city) +
+ geom_pointrange() +
+ theme_classic()
+
+# this graph is really helpful and answers the question, but it needs to be cleaned up for a final figure that fully answers the question.
+
+plot.data %>%
+ ggplot() +
+ geom_linerange(aes(x = weekofyear,
+     ymin = lower,
+     ymax = upper,
+     group = weekofyear,
+     color = city),
+     alpha = 0.5) +
+ geom_point(aes(x = weekofyear,
+     y = average_cases,
+     group = weekofyear,
+     color = city),
+     size = 2.5) +
+ scale_x_continuous(breaks = seq(0,53,5)) +
+ theme_classic() +
+ theme(legend.position = "bottom") +
+ xlab("Week of the Year") +
+ ylab("Average Dengue Fever Cases")
+
+# this is the best version of this graph because it spread out ending at 53 weeks, and is more spread out so the points aren't on top on each other. Everything here is labeled correctly and is easy to understand. This is my final graph that I believe accomplishes the goal for #2.
+
+```
 ## (3) Data exploration of potential explanatory variables
 
 Consider whether transforming any of the variables might increase the statistical power available.
 Explore the correlation of the potential explanatory variables with each other and with dengue incidence.
 Present a two or more publication-quality graphics to illustrate your most important findings.
+
+To begin exploring the possible explantory variables I will start by looking at precipitation and temperature which are both interesting points that would help us understand dengue fever in the areas. 
+To start I will conduct normality tests to see where the variables stand.
+```{r normality tests for precip and temp}
+shapiro.test(new.data$station_avg_temp_c)
+simple.eda(new.data$station_avg_temp_c)
+
+shapiro.test(new.data$station_precip_mm)
+simple.eda(new.data$station_precip_mm)
+```
+Both temperature and precipitation have a non-normal distributions, as indicated by the Shapiro test. Temperature is left-skewed while precipitation is highly right-skewed.
+```{r normality tests precip and temp transformed}
+shapiro.test(log(new.data$station_avg_temp_c))
+simple.eda(log(new.data$station_avg_temp_c))
+
+shapiro.test(sqrt(new.data$station_precip_mm))
+simple.eda(sqrt(new.data$station_precip_mm))
+```
+The QQ plots here are looking much better, but based on the Shapiro tests the data is still not normally distributed. I will proceed with caution as I continue to use the transformed data to begin statistical analyses. 
+
+
+```{r temp and precip}
+mean.temp <- log(new.data$station_avg_temp_c)
+mean.precip <- sqrt(new.data$station_precip_mm)
+```
+
 
 ### Exploration
 
