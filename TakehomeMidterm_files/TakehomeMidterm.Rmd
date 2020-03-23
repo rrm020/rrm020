@@ -14,10 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-For the takehome midterm you will have 48 hours to complete the objectives listed below. The deadline for submission is 18 March 2020 at 2pm EST.
+For the take home midterm you will have 48 hours to complete the objectives listed below. The deadline for submission is 18 March 2020 at 2pm EST.
 
 Date/Time started: Sunday March 23rd 11:30 am
-Date/Time completed: Sunday March 23rd 
+Date/Time completed: Monday March 24th 1:00 pm 
 
 You will be graded on the following criteria:
 
@@ -199,7 +199,7 @@ summarise(cases = sum(total_cases))
 ```
 The values are pretty close, but not 100% exact. Most years are pretty close but 2001 is off by about 300 based on the paper's numbers. Due to the fact that most values are similar I will proceed. 
 
-Next I need to remove the NAs to clean the data. First I need to check to see how many varaibles are impacted by NAs.
+Next I need to remove the NAs to clean the data. First I need to check to see how many variables are impacted by NAs.
 
 ```{r check NAs}
 
@@ -213,7 +213,7 @@ data <- merge(dengue_features_train, dengue_labels_train)
 length(data)
 nrow(data)
 ```
-Because 3 of the varaibles were the same in the data sets they were merged to make 25 variables with 1456 observations, which is exactly the number of observations from both sets so nothing went missing.
+Because 3 of the variables were the same in the data sets they were merged to make 25 variables with 1456 observations, which is exactly the number of observations from both sets so nothing went missing.
 ```{r checking new data frame}
 str(data)
 ```
@@ -340,7 +340,7 @@ Consider whether transforming any of the variables might increase the statistica
 Explore the correlation of the potential explanatory variables with each other and with dengue incidence.
 Present a two or more publication-quality graphics to illustrate your most important findings.
 
-To begin exploring the possible explantory variables I will start by looking at precipitation and temperature which are both interesting points that would help us understand dengue fever in the areas. 
+To begin exploring the possible explanatory variables I will start by looking at precipitation and temperature which are both interesting points that would help us understand dengue fever in the areas. 
 To start I will conduct normality tests to see where the variables stand.
 ```{r normality tests for precip and temp}
 shapiro.test(clean.data$station_avg_temp_c)
@@ -363,7 +363,7 @@ mean.precip <- sqrt(clean.data$station_precip_mm)
 Now we have the mean values recorded for the transformed data which will be used to compare the values below.
 ```{r Scatterplot Temp and Precip}
 ggplot() + 
-  ggtitle("Mean Temperature by Mean Precipiation") +
+  ggtitle("Mean Temperature by Mean Precipitation") +
  aes(x = mean.precip, y = mean.temp) +
  geom_point() + 
   theme_bw() + 
@@ -372,12 +372,12 @@ ggplot() +
  geom_smooth(method=lm , color="black", se=TRUE) + 
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
-Here is the scatterplot to visualize the correlation between the transformed data.
+Here is the scatter plot to visualize the correlation between the transformed data.
 ```{r Statistics on Precip and Temp}
 temp.precip <- lm(mean.precip ~ mean.temp)
 summary(temp.precip)
 ```
-The p value here of .000519 shows us that it is significant, but the adjusted r-squared value of 0.0075 tells us there is little correlation between average temperature and avereage precipitation. This is also clearly indicated on the scatterplot above with values being very spread out. Although there was not a correlation between those variables, we can now look at average precipitation by cases and average temperaure by cases. 
+The p value here of .000519 shows us that it is significant, but the adjusted r-squared value of 0.0075 tells us there is little correlation between average temperature and average precipitation. This is also clearly indicated on the scatter plot above with values being very spread out. Although there was not a correlation between those variables, we can now look at average precipitation by cases and average temperature by cases. 
 
 ```{r Cases by Temp}
 ggplot() + ggtitle("Number of Cases by Mean Temperature") +
@@ -385,11 +385,11 @@ ggplot() + ggtitle("Number of Cases by Mean Temperature") +
  geom_point() + theme_bw() + scale_x_continuous(name = "Natural Log of Mean Temperature") + scale_y_continuous(name = "Total Cases") +
  geom_smooth(method=lm , color="black", se=TRUE) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
-This graph needs to exclude outliers because these values are far to large to be included. To find the cut off or the upper limit we must look at the IQR by summarizing the data.
+This graph needs to exclude outlines because these values are far to large to be included. To find the cut off or the upper limit we must look at the IQR by summarizing the data.
 ```{r summary}
 summary(clean.data$total_cases)
 ```
-This means the value for the upper limit will be: 28+1.5(28-5) = 62.5. so a new scatterplot will be made to remove values above 62.5.
+This means the value for the upper limit will be: 28+1.5(28-5) = 62.5. so a new scatter plot will be made to remove values above 62.5.
 ```{r}
 ggplot() + ggtitle("Number of Cases by Mean Temperature") +
  aes(x = mean.temp, y = clean.data$total_cases) +
@@ -449,7 +449,7 @@ xlab("Date") +
 
 ### Presentation
 
-We can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation. There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases deacreases. After looking at the correlation between the precipitation and temperature, I looked at different graphs showing cases verus the variables which clearly show that dengue fever tends to come in waves. Dengue presence has been associated with variations in climate. Increased rainfall supports mosquito habitat availability, and high temperatures promote mosquito development.Dengue epidemics often occur seasonally, with more cases found during wetter and warmer months.
+We can see that between total number of cases and mean temperature it is statistically significant with a p value of 1.357e-05, and there is a very slight positive correlation. As temperature increases, the number of cases increase. Next we will look at precipitation. There is a slight negative correlation between average precipitation and total number of cases, and the data is statistically significant. As precipitation increases, total number of cases decreases. After looking at the correlation between the precipitation and temperature, I looked at different graphs showing cases versus the variables which clearly show that dengue fever tends to come in waves. Dengue presence has been associated with variations in climate. Increased rainfall supports mosquito habitat availability, and high temperatures promote mosquito development.Dengue epidemics often occur seasonally, with more cases found during wetter and warmer months.
 
 
 
@@ -505,9 +505,9 @@ sj_model <- glm.nb(data = sj_only, total_cases ~
                      station_min_temp_c)
 summary(sj_model)
 ```
-Here I looked at the cities individually with the benchmark variables to see how the benchmark can be imporved. To improve the benchmark I won't remove anything because that would be creating a whole new benchmark so I aim to just add varaibles to improve it. 
+Here I looked at the cities individually with the benchmark variables to see how the benchmark can be improved. To improve the benchmark I won't remove anything because that would be creating a whole new benchmark so I aim to just add variables to improve it. 
 
-In the code below is my final "better benchmark" because the dropterm tests have lower AIC values for the variables I added than the current, meaning they make the model better than it would be without them.
+In the code below is my final "better benchmark" because the drop term tests have lower AIC values for the variables I added than the current, meaning they make the model better than it would be without them.
 ```{r better benchmark}
 
 cities.benchmark <- glm.nb(data = clean.data, total_cases ~
@@ -533,7 +533,7 @@ dropterm(better.benchmark)
 ```
 
 # Acknowledgements
-Just like to shoutout Dr. Field for providing really helpful labs that made this possible because I came into this class with very basic R knowledge, I'm amazed at what I can make now!
+Just like to shout out Dr. Field for providing really helpful labs that made this possible because I came into this class with very basic R knowledge, I'm amazed at what I can make now!
 
  
 Cite online sources used.
