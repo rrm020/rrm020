@@ -361,27 +361,29 @@ simple.eda(log(clean.data$station_avg_temp_c))
 shapiro.test(sqrt(clean.data$station_precip_mm))
 simple.eda(sqrt(clean.data$station_precip_mm))
 ```
-The QQ plots here are looking much better, but based on the Shapiro tests the data is still not normally distributed. I will proceed with caution as I continue to use the transformed data to begin statistical analyses. 
+The QQ plots here are looking much better, but based on the Shapiro tests the data is still not normally distributed. I will proceed with caution as I continue to use the transformed data to begin my statistical exploration of this data. 
 ```{r values for temp and precip}
 mean.temp <- log(clean.data$station_avg_temp_c)
 mean.precip <- sqrt(clean.data$station_precip_mm)
 ```
-
+Now we have the mean values recorded for the transformed data which will be used to compare the values below.
 ```{r Scatterplot Temp and Precip}
-ggplot() + ggtitle("Mean Temperature by Mean Precipiation") +
+ggplot() + 
+  ggtitle("Mean Temperature by Mean Precipiation") +
  aes(x = mean.precip, y = mean.temp) +
  geom_point() + 
-  theme_bw() + scale_x_continuous(name = "Square Root of Mean Precipitation") + 
+  theme_bw() + 
+  scale_x_continuous(name = "Square Root of Mean Precipitation") + 
   scale_y_continuous(name = "Natural Log of Mean Temperature") +
  geom_smooth(method=lm , color="black", se=TRUE) + 
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
-
+Here is the scatterplot to visualize the correlation between the transformed data.
 ```{r Statistics on Precip and Temp}
 temp.precip <- lm(mean.precip ~ mean.temp)
 summary(temp.precip)
 ```
-
+The p value here of .000519 shows us that it is significant, but the adjusted r squared value of 0.0075 tells us there is little correlation between average temperature and avereage precipitation. This is also clearly indicated on the scatterplot above with values being very spread out. Although there was not a correlation between those variables, we can now look at average precipitation by cases and average temperaure by cases. 
 
 ```{r Cases by Temp}
 summary(clean.data$total_cases)
