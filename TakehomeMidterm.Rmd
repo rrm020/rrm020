@@ -349,27 +349,59 @@ Present a two or more publication-quality graphics to illustrate your most impor
 To begin exploring the possible explantory variables I will start by looking at precipitation and temperature which are both interesting points that would help us understand dengue fever in the areas. 
 To start I will conduct normality tests to see where the variables stand.
 ```{r normality tests for precip and temp}
-shapiro.test(new.data$station_avg_temp_c)
-simple.eda(new.data$station_avg_temp_c)
-
-shapiro.test(new.data$station_precip_mm)
-simple.eda(new.data$station_precip_mm)
+shapiro.test(clean.data$station_avg_temp_c)
+simple.eda(clean.data$station_avg_temp_c)
+shapiro.test(clean.data$station_precip_mm)
+simple.eda(clean.data$station_precip_mm)
 ```
 Both temperature and precipitation have a non-normal distributions, as indicated by the Shapiro test. Temperature is left-skewed while precipitation is highly right-skewed.
 ```{r normality tests precip and temp transformed}
-shapiro.test(log(new.data$station_avg_temp_c))
-simple.eda(log(new.data$station_avg_temp_c))
-
-shapiro.test(sqrt(new.data$station_precip_mm))
-simple.eda(sqrt(new.data$station_precip_mm))
+shapiro.test(log(clean.data$station_avg_temp_c))
+simple.eda(log(clean.data$station_avg_temp_c))
+shapiro.test(sqrt(clean.data$station_precip_mm))
+simple.eda(sqrt(clean.data$station_precip_mm))
+```
+The QQ plots here are looking much better, but based on the Shapiro tests the data is still not normally distributed. I will proceed with caution as I continue to use the transformed data to begin statistical analyses. 
+```{r temp and precip}
+mean.temp <- log(clean.data$station_avg_temp_c)
+mean.precip <- sqrt(clean.data$station_precip_mm)
 ```
 The QQ plots here are looking much better, but based on the Shapiro tests the data is still not normally distributed. I will proceed with caution as I continue to use the transformed data to begin statistical analyses. 
 
 
-```{r temp and precip}
-mean.temp <- log(new.data$station_avg_temp_c)
-mean.precip <- sqrt(new.data$station_precip_mm)
+```{r Scatterplot Temp and Precip}
+ggplot() + ggtitle("Mean Temperature by Mean Precipiation") +
+ aes(x = mean.precip, y = mean.temp) +
+ geom_point() + 
+  theme_bw() + scale_x_continuous(name = "Square Root of Mean Precipitation") + 
+  scale_y_continuous(name = "Natural Log of Mean Temperature") +
+ geom_smooth(method=lm , color="black", se=TRUE) + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
+
+```{r Statistics on Precip and Temp}
+tempbyprecip <- lm(mean.precip ~ mean.temp)
+summary(tempbyprecip)
+```
+
+
+```{r Cases by Temp}
+summary(clean.data$total_cases)
+ggplot() + ggtitle("Number of Cases by Mean Temperature") +
+ aes(x = mean.temp, y = clean.data$total_cases) +
+ geom_point() + theme_bw() + scale_x_continuous(name = "Natural Log of Mean Temperature") + scale_y_continuous(name = "Total Cases") + coord_cartesian(ylim = c(0, 62.5)) +
+ geom_smooth(method=lm , color="black", se=TRUE) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+
+```{r Statistics on Temp and Cases}
+tempbycase <- lm(mean.temp ~ clean.data$total_cases)
+summary(tempbycase)
+cor(mean.temp, clean.data$total_cases, method = c("spearman"), use = "complete.obs")
+cor(mean.temp, clean.data$total_cases, method = c("pearson"), use = "complete.obs")
+```
+
+
 
 
 ### Exploration
