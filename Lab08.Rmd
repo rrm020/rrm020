@@ -1,6 +1,6 @@
 ---
 title: "Lab 08"
-author: "Biology Student"
+author: "Riley McDonnell"
 date: "23 Mar 2020"
 output: github_document
 ---
