@@ -87,8 +87,6 @@ SRAsummary %>%
 
 ```
 
-```
-
 Calculate how long each read is expected to be:
 
 ```{r}
@@ -97,6 +95,7 @@ mutate(ReadLength = round(Bases / (Reads * (1 + (Layout == "PAIRED"))))) -> SRAs
 print(SRAsummary)
 write_csv(SRAsummary, path = "SRAsummary.csv")
 ```
+
 
 ## Study Design
 
