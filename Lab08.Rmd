@@ -46,40 +46,50 @@ The number of reads is listed as "# of Spots".
 ```{r Summary}
 SRAsummary <- data.frame(matrix(ncol = 5, nrow = 0))
 names(SRAsummary) <- c("SampleName", "LongName", "Layout", "Reads", "Bases")
+SRAsummary %>% 
+  add_row(
+    SampleName = "SRR031711", 
+    LongName = "S2_DRSC_Untreated-1", 
+    Layout = "SINGLE",                         # or "PAIRED"
+    Reads = 6064911, 
+    Bases = 272.9 * 10^6) -> SRAsummary
+SRAsummary %>% 
+  add_row(
+    SampleName = "SRR031714", 
+    LongName = "S2_DRSC_Untreated-3", 
+    Layout = "PAIRED",                         # or "SINGLE"
+    Reads = 5327425, 
+    Bases = 394.2 * 10^6) -> SRAsummary
+SRAsummary %>% 
+  add_row(
+    SampleName = "SRR031716", 
+    LongName = "S2_DRSC_Untreated-4", 
+    Layout = "PAIRED",                         # or "SINGLE"
+    Reads = 5921707, 
+    Bases = 438.2 * 10^6) -> SRAsummary
+SRAsummary %>% 
+  add_row(
+    SampleName = "SRR031718", 
+    LongName = "S2_DRSC_CG8144_RNAi-1", 
+    Layout = "SINGLE",                         # or "PAIRED"
+    Reads = 6724171, 
+    Bases = 302.6 * 10^6) -> SRAsummary
+SRAsummary %>% 
+  add_row(
+    SampleName = "SRR031724", 
+    LongName = "S2_DRSC_CG8144_RNAi-3", 
+    Layout = "PAIRED",                         # or "SINGLE"
+    Reads = 5962418, 
+    Bases = 441.2 * 10^6) -> SRAsummary
+SRAsummary %>% 
+  add_row(
+    SampleName = "SRR031726", 
+    LongName = "S2_DRSC_CG8144_RNAi-4", 
+    Layout = "PAIRED",                         # or "SINGLE"
+    Reads = 6372581, 
+    Bases = 471.6 * 10^6) -> SRAsummary
 
-SRAsummary %>%
- add_row(SampleName = "SRR031711",
-   LongName = "S2_DRSC_Untreated-1",
-   Layout = "SINGLE",              
-   Reads = 6064911,
-   Bases = 272.9 * 10^6) %>%
- add_row(SampleName = "SRR031714",
-   LongName = "S2_DRSC_Untreated-3",
-   Layout = "PAIRED",
-   Reads = 5327425,
-   Bases = 394.2 * 10^6) %>%
- add_row(SampleName = "SRR031716",
-   LongName = "S2_DRSC_Untreated-4",
-   Layout = "PAIRED",
-   Reads = 5921707,
-   Bases = 438.2 * 10^6) %>%
- add_row(SampleName = "SRR031718",
-   LongName = "S2_DRSC_CG8144_RNAi-1",
-   Layout = "SINGLE",
-   Reads = 6724171,
-   Bases = 302.6 * 10^6) %>%
- add_row(SampleName = "SRR031724",
-   LongName = "S2_DRSC_CG8144_RNAi-3",
-   Layout = "PAIRED",
-   Reads = 5962418,
-   Bases = 441.2 * 10^6) %>%
- add_row(SampleName = "SRR031726",
-   LongName = "S2_DRSC_CG8144_RNAi-4",
-   Layout = "PAIRED",
-   Reads = 6372581,
-   Bases = 471.6 * 10^6) -> SRAsummary
-
-# this part ran on my computer perfectly until it just stopped working... I have no idea how to fix it because I didn't change anything from when I started
+# this part ran on my computer perfectly until it just stopped working a day later ... I have no idea how to fix it because I didn't change anything from when I started. Something about sample name as a logical and character it worked fine before?
 ```
 
 Calculate how long each read is expected to be:
@@ -97,20 +107,40 @@ write_csv(SRAsummary, path = "SRAsummary.csv")
 Review the material at https://rnaseq.uoregon.edu/, in the paper, and in the SRA to answer the following questions:
 
 1. What are the biological conditions that we are going to compare? 
+Drosophila cells used for RNA screening were compared for expression of genes in cells with functional PS (a Drosophila RNA binding protein) and knockdown - PS (induced through RNA interference of PS).
 
 2. How many biological replicates are we studying for each condition?
+There are four biological replicates for the ps-RNAi treated condition and three replicates for the untreated condition.
 
 3. What sequencing platform was used?
+The RNA-seq platform used was Illumina Genome Analyzer II.
 
 4. What selection scheme (if any) was performed on the RNA?
+The RNA samples were selected for mRNA, about 300 bp in size.
 
 5. What was the depth of sequencing for each condition (min, max, and mean)?
+I'm not sure if this is what you meant by this:
+
+```{r}
+#untreated
+SRAsummary  %>% 
+    dplyr::filter(SampleName == c("SRR031711", "SRR031714", "SRR031716")) %>%summarise(mean = mean(Reads), min = min(Reads), max = max(Reads))
+
+#RNAi
+SRAsummary  %>% 
+    dplyr::filter(SampleName == c("SRR031718", "SRR031724", "SRR031726")) %>%summarise(mean = mean(Reads), min = min(Reads), max = max(Reads))
+
+#these would work if the data before actaully ran but it worked perfectly before. 
+```
 
 6. What library prep protocol used? If a stranded library prep was used, what is the strandedness of the reads?
+Both single-end and paired-end RNA-sequencing library protocol. Specifically Illumina. 
 
 7. Were the sequences single-end or paired end?
+Both single-end and paired-end sequences were used in each condition.
 
 8. What is the length of the reads?
+The reads had lengths of 37 or 45 nucleotides, but were trimmed to 37 nucleotides.
 
 ## Next Generation Sequencing Files
 
@@ -220,6 +250,8 @@ Download a file from Galaxy by clicking on it in the History area and then click
 http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
 
 Review the examples of "Good" and "Bad" Illumina data and summarize your impressions of this dataset. 
+
+
 
 ## Trimmomatic
 
