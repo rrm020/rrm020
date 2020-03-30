@@ -46,20 +46,54 @@ The number of reads is listed as "# of Spots".
 ```{r Summary}
 SRAsummary <- data.frame(matrix(ncol = 5, nrow = 0))
 names(SRAsummary) <- c("SampleName", "LongName", "Layout", "Reads", "Bases")
-SRAsummary %>% 
-  add_row(
-    SampleName = "SRR031711", 
-    LongName = "S2_DRSC_Untreated-1", 
-    Layout = "SINGLE",                         # or "PAIRED"
-    Reads = 6064911, 
-    Bases = 272.9 * 10^6) -> SRAsummary
+
+SRAsummary %>%
+ add_row(
+   SampleName = "SRR031711",
+   LongName = "S2_DRSC_Untreated-1",
+   Layout = "SINGLE",              
+   Reads = 6064911,
+   Bases = 272.9 * 10^6) %>%
+ add_row(
+   SampleName = "SRR031714",
+   LongName = "S2_DRSC_Untreated-3",
+   Layout = "PAIRED",
+   Reads = 5327425,
+   Bases = 394.2 * 10^6) %>%
+ add_row(
+   SampleName = "SRR031716",
+   LongName = "S2_DRSC_Untreated-4",
+   Layout = "PAIRED",
+   Reads = 5921707,
+   Bases = 438.2 * 10^6) %>%
+ add_row(
+   SampleName = "SRR031718",
+   LongName = "S2_DRSC_CG8144_RNAi-1",
+   Layout = "SINGLE",
+   Reads = 6724171,
+   Bases = 302.6 * 10^6) %>%
+ add_row(
+   SampleName = "SRR031724",
+   LongName = "S2_DRSC_CG8144_RNAi-3",
+   Layout = "PAIRED",
+   Reads = 5962418,
+   Bases = 441.2 * 10^6) %>%
+ add_row(
+   SampleName = "SRR031726",
+   LongName = "S2_DRSC_CG8144_RNAi-4",
+   Layout = "PAIRED",
+   Reads = 6372581,
+   Bases = 471.6 * 10^6) -> SRAsummary
+
+```
+
 ```
 
 Calculate how long each read is expected to be:
 
 ```{r}
 SRAsummary %>%
-  mutate(ReadLength = round(Bases / (Reads * (1 + (Layout == "PAIRED"))))) -> SRAsummary
+mutate(ReadLength = round(Bases / (Reads * (1 + (Layout == "PAIRED"))))) -> SRAsummary
 print(SRAsummary)
 write_csv(SRAsummary, path = "SRAsummary.csv")
 ```
