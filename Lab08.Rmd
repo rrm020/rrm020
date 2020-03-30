@@ -48,43 +48,38 @@ SRAsummary <- data.frame(matrix(ncol = 5, nrow = 0))
 names(SRAsummary) <- c("SampleName", "LongName", "Layout", "Reads", "Bases")
 
 SRAsummary %>%
- add_row(
-   SampleName = "SRR031711",
+ add_row(SampleName = "SRR031711",
    LongName = "S2_DRSC_Untreated-1",
    Layout = "SINGLE",              
    Reads = 6064911,
    Bases = 272.9 * 10^6) %>%
- add_row(
-   SampleName = "SRR031714",
+ add_row(SampleName = "SRR031714",
    LongName = "S2_DRSC_Untreated-3",
    Layout = "PAIRED",
    Reads = 5327425,
    Bases = 394.2 * 10^6) %>%
- add_row(
-   SampleName = "SRR031716",
+ add_row(SampleName = "SRR031716",
    LongName = "S2_DRSC_Untreated-4",
    Layout = "PAIRED",
    Reads = 5921707,
    Bases = 438.2 * 10^6) %>%
- add_row(
-   SampleName = "SRR031718",
+ add_row(SampleName = "SRR031718",
    LongName = "S2_DRSC_CG8144_RNAi-1",
    Layout = "SINGLE",
    Reads = 6724171,
    Bases = 302.6 * 10^6) %>%
- add_row(
-   SampleName = "SRR031724",
+ add_row(SampleName = "SRR031724",
    LongName = "S2_DRSC_CG8144_RNAi-3",
    Layout = "PAIRED",
    Reads = 5962418,
    Bases = 441.2 * 10^6) %>%
- add_row(
-   SampleName = "SRR031726",
+ add_row(SampleName = "SRR031726",
    LongName = "S2_DRSC_CG8144_RNAi-4",
    Layout = "PAIRED",
    Reads = 6372581,
    Bases = 471.6 * 10^6) -> SRAsummary
 
+# this part ran on my computer perfectly until it just stopped working... I have no idea how to fix it because I didn't change anything from when I started
 ```
 
 Calculate how long each read is expected to be:
@@ -253,15 +248,20 @@ They can be used in some analyses, but we will not be needing them, so it is bes
 
 Now run FastQC and MultiQC on the trimmed data. Has it improved? Is it "good" yet?
 
-1. How many reads were removed from each file during the trimming step?
+1. How many reads were removed from each file during the trimming step? The trimming step varied for each file but Untreated 1 had a significant amount removed is is only 18 bp now. Some only removed a few and others it wa a larger amount.
 
 2. What are the read lengths of each file after trimming (min, max, mean)?
+18 (min), 26, 27, 34, 34, 35, 35, 36, 36, 42 (max). Mean= 32.3.
 
 3. After trimming, how do the quality of the single-end reads compare to the paired-end reads (within each treatment group)?
+The pair-end reads score much better than the single- end reads. 
 
 4. After trimming, how do the quality of the RNAi treated reads compare to the control reads (within each sequencing layout type)?
+All of the paired reads have similar quality for both treatment types, but the RNAi treated singe read has much lower quality than the untreated single read.
+
 
 5. Do you anticipate any problems using this data to compare differential transcript expression between the two treatment groups?
+Paired-end reads will be easier to make conclusion about because the quality is much better than the single-end reads. But we can still draw some conclusions about both. 
 
 ## Helpful RNA-Seq Links
 
