@@ -251,7 +251,7 @@ http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
 
 Review the examples of "Good" and "Bad" Illumina data and summarize your impressions of this dataset. 
 
-
+The data sets help illustrate how the Fast QC output looks, which is helpful for running the Pasilla set and drawing conclusions there. There is a lot of variablity within this dataset.
 
 ## Trimmomatic
 
