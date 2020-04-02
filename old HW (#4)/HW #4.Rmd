@@ -1,0 +1,82 @@
+---
+title: "HW #4"
+author: "Riley McDonnell"
+date: "2/24/2020"
+output: git_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+For this assignment we need to get the data from this paper. With some initial research on the paper I’ve had no luck so far in finding the original data set. I’ve looked in the author's name and all citations of the paper to try and find the original data, but nothing has come up. Since I’ll be attempting to make a figure only on the content of the paper I will be making a histogram estimating the bar sizes due to conflicting information on the paper. They report values into the 800s and their axis only goes up to 350. Not sure if their data was adjusted or if they excluded some data points, but the values reported do not match their histograms. With this issue being prevalent, I'm going to make estimates based on what I can see on their charts.
+
+```{r}
+num_brain_regions <- 6
+n = 5
+
+vm_control_means <- c(100, 100, 100)
+striatum_control_means <- c(100, 100, 100)
+spinal_control_means <- c(100, 100, 100)
+brainstem_control_means <- c(100, 100, 100)
+cortex_control_means <- c(100, 100, 100)
+cerebellum_control_means <- c(100, 100, 100)
+
+vm_treatment_means <- c(150, 56, 49)
+striatum_treatment_means <- c(140, 240, 90)
+spinal_treatment_means <- c(160, 280, 98)
+brainstem_treatment_means <- c(120, 59, 51)
+cortex_treatment_means <- c(110, 250, 70)
+cerebellum_treatment_means <- c(190, 120, 200)
+
+vm_control_sd <- c(10,10,10) * sqrt(n)
+striatum_control_sd <- c(20,20,2) * sqrt(n)
+spinal_control_sd <- c(20,10,1) * sqrt(n)
+brainstem_control_sd <- c(30,5,5) * sqrt(n)
+cortex_control_sd <- c(10,5,5) * sqrt(n)
+cerebellum_control_sd <- c(10,10,2) * sqrt(n)
+
+vm_treatment_sd <- c(3,11,8) * sqrt(n)
+striatum_treatment_sd <- c(15, 40, 10) * sqrt(n)
+spinal_treatment_sd <- c(20,20,20) * sqrt(n)
+brainstem_treatment_sd <- c(20,10,10) * sqrt(n)
+cortex_treatment_sd <- c(30,40,20) * sqrt(n)
+cerebellum_treatment_sd <- c(35,20,25) * sqrt(n)
+
+
+#simulating data from normal distributions
+vm_control_sim <- rnorm(n = n, mean = vm_control_means, sd = vm_control_sd)
+striatum_control_sim <- rnorm(n = n, mean = striatum_control_means, sd = sqrt(n) * striatum_control_sd)
+spinal_control_sim <- rnorm(n = n, mean = spinal_control_means, sd = sqrt(n) * spinal_control_sd)
+brainstem_control_sim <- rnorm(n = n, mean = brainstem_control_means, sd = sqrt(n) * brainstem_control_sd)
+cortex_control_sim <- rnorm(n = n, mean = cortex_control_means, sd = sqrt(n) * cortex_control_sd)
+cerebellum_control_sim <- rnorm(n = n, mean = cerebellum_control_means, sd = sqrt(n) * cerebellum_control_sd)
+    
+vm_treatment_sim <- rnorm(n = n, mean = vm_treatment_means, sd = vm_treatment_sd)
+striatum_treatment_sim <- rnorm(n = 5, mean = striatum_treatment_means, sd = sqrt(n) * striatum_treatment_sd)
+spinal_treatment_sim <- rnorm(n = 5, mean = spinal_treatment_means, sd = sqrt(n) * spinal_treatment_sd)
+brainstem_treatment_sim <- rnorm(n = 5, mean = brainstem_treatment_means, sd = sqrt(n) * brainstem_treatment_sd)
+cortex_treatment_sim <- rnorm(n = 5, mean = cortex_treatment_means, sd = sqrt(n) * cortex_treatment_sd)
+cerebellum_treatment_sim <- rnorm(n = 5, mean = cerebellum_treatment_means, sd = sqrt(n) * cerebellum_treatment_sd)
+    
+#setting up how the data frame data will be organized
+group_labels <- c(rep("Control", n *  num_brain_regions), rep("Treatment", n *  num_brain_regions))
+brain_region_labels <- c("Ventral Midbrain", "Striatum", "Spinal Cord", "Lower Brainstem", "Cerebral Cortex", "Cerebellum")
+brain_region_labels_rep <- rep(brain_region_labels, each = n, times = 2)
+all_observations <- c(vm_control_sim, striatum_control_sim, spinal_control_sim, brainstem_control_sim, cortex_control_sim, cerebellum_control_sim, vm_treatment_sim, striatum_treatment_sim, spinal_treatment_sim, brainstem_treatment_sim, cortex_treatment_sim, cerebellum_treatment_sim)
+    
+#creating the data frame
+simulated_data.df <- data.frame("Group" = group_labels, "CNS Region" = brain_region_labels_rep, observations = all_observations )
+    
+#setting all negative values to zero
+simulated_data.df %>%  mutate(adjusted_obs = ifelse(observations < 0, 0, observations)) -> simulated_data.df
+    
+simulated_data.df %>% group_by(Group,CNS.Region) %>% summarise(mean_activity = mean(adjusted_obs)) -> simulated_means.df
+    
+  
+pl <- ggplot(simulated_means.df) + geom_bar(aes(x = CNS.Region, y = mean_activity, fill = Group), stat = "identity", position = "dodge") + ylab("Proteasome Enzyme Activity (% of Control)") + xlab("CNS Region") + theme(axis.text.x = element_text(angle = 20))
+print(pl + ggtitle("Effect of PSI Treatment After 1 Week"))
+```
+
+This was a very difficult assignment for me because I had not idea how to generate my own data since we could not find the original data set. Will Snyder helped me out on most of this because I wasn't sure how to approach this. I was only able to make one graph on my own but three were produced in the original paper. I wasn't going repeat writing all this code for 3 graphs but I'm sure there was an easier way to generate 3 figures. 
