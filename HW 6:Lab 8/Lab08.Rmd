@@ -44,8 +44,12 @@ Look up each of the Run Accession numbers and record the needed information belo
 The number of reads is listed as "# of Spots".
 
 ```{r Summary}
-SRAsummary <- data.frame(matrix(ncol = 5, nrow = 0))
-names(SRAsummary) <- c("SampleName", "LongName", "Layout", "Reads", "Bases")
+SRAsummary <- data.frame(SampleName=character(),
+                 LongName=character(),
+                 Layout=character(),
+                 Reads=double(),
+                 Bases=double(),
+                 stringsAsFactors=FALSE)
 SRAsummary %>% 
   add_row(
     SampleName = "SRR031711", 
