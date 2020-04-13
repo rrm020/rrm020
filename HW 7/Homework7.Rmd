@@ -19,7 +19,7 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse) # L
 ## Prerequisites for Homework 7
 
 1. Completion of the [Galaxy](1-Galaxy.md) and [SARTools](2-SARTools.md) tutorials.
-2. Results from either EdgeR and DESeq2 analysis of differential **gene** expression of the Pasilla dataset (after batch effect correction)
+2. Results from either EdgeR or DESeq2 analysis of differential **gene** expression of the Pasilla dataset (after batch effect correction)
 3. Results from the EdgeR and DESeq2 analysis of differential **transcript** expression of the Pasilla dataset (after batch effect correction)
 
 ## Batch Correction in SARTools
@@ -53,28 +53,80 @@ In one or two sentences, summarize the difference that batch correction made in 
 
 ## Pasilla Gene Analysis
 
-1. Use http://flybase.org/ to determine the FlyBase **gene** name for the Pasilla gene. 
+1. Use http://flybase.org/ to determine the FlyBase **gene** name for the Pasilla gene.
+
+You are looking for the "Flybase ID".
+
 2. Load in the gene expression results from either EdgeR or DESeq2.
+
+Below I demonstrate how to load in both, but you only need to use one or the other.
+
+```{r Loading in Data}
+# DESeq2
+DESeq2_genes_complete <- read_delim("SARTools/SARTools.DESeq2.genes/tables/RNAivsUntreated.complete.txt", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+# Check that numbers agree with SARTools Report
+DESeq2_genes_complete %>% dplyr::filter(padj < 0.05) %>% tally()
+DESeq2_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FoldChange > 1) %>% tally()
+DESeq2_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FoldChange < 1) %>% tally()
+
+# edgeR
+edgeR_genes_complete <- read_delim("SARTools/SARTools.edgeR.genes/tables/RNAivsUntreated.complete.txt", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+# Check that numbers agree with SARTools Report
+edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% tally()
+edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FC > 1) %>% tally()
+edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FC < 1) %>% tally()
+```
+
 3. Determine if the Pasilla gene was differentially expressed in the treated samples.
 
 ```{r Loading in Data}
-RNAivsUntreated_complete <- read_delim("SARTools.DESeq2.genes/tables/RNAivsUntreated.complete.txt", 
-    "\t", escape_double = FALSE, trim_ws = TRUE)
-# Check that numbers agree with SARTools Report
-RNAivsUntreated_complete %>% dplyr::filter(padj < 0.05) %>% tally()
-RNAivsUntreated_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FoldChange > 1) %>% tally()
-RNAivsUntreated_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FoldChange < 1) %>% tally()
+# Looking for a specific gene
+DESeq2_genes_complete %>% dplyr::filter(Id == "FBgn0261552")
+edgeR_genes_complete %>% dplyr::filter(Id == "FBgn0261552")
 ```
+
+What is the expression level (normalized counts) for each treatement group?
+Untreated:
+RNAi-treated:
+
+What is the fold-change difference in expression level between the two treatment groups?
+
+
+How significant is this difference in expression level?
+
 
 ## Comparison of EdgeR and DESeq2
 
-1. Load in the transcript expression results from both EdgeR or DESeq2.
+1. Load in the transcript expression results from both EdgeR and DESeq2.
+
+```{r Load transcript results}
+
+```
+
+Note that DESeq2 and edgeR have the same raw counts (as expected), but different counts after normalization and different Differential Expression results.
+
 2. Determine the number of differentially expressed transcripts detected by each program.
-3. Compare the identity of the transcripts differentially expressed
+
+Separately tally the significantly (FDR < 0.05) upregulated and downregulated transcripts for each analysis pipeline.
 
 ```{r}
 
 ```
+
+3. Compare the identity of the transcripts differentially expressed
+
+Do both programs identify exactly the same genes as differentially expressed?
+
+I suggest using the `intersect()` and `setdiff()` functions to compare the list of Ids for each subset of transcripts.
+
+https://stat.ethz.ch/R-manual/R-devel/library/base/html/sets.html
+
+```{r}
+
+```
+
 
 Bonus, if you are feeling brave. Look for a new package that allows you to make Venn diagrams of the differentially expressed transcripts. 
 
