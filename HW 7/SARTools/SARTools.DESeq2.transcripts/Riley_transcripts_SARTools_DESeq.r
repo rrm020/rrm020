@@ -100,3 +100,4 @@ writeReport.DESeq2(target=target, counts=counts, out.DESeq2=out.DESeq2, summaryR
                    condRef=condRef, batch=batch, fitType=fitType, cooksCutoff=cooksCutoff,
                    independentFiltering=independentFiltering, alpha=alpha, pAdjustMethod=pAdjustMethod,
                    typeTrans=typeTrans, locfunc=locfunc, colors=colors)
+
