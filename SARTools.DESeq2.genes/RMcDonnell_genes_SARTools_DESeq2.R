@@ -11,7 +11,7 @@
 
 rm(list=ls())                                        # remove all the objects from the R session
 
-workDir <- "/Users/rileymcdonnell/Desktop/Biology 364/rrm020/SARTools.DESeq2.genes"      # working directory for the R session
+workDir <- "/Users/rileymcdonnell/Desktop/Biology 364/rrm020/SARTools/SARTools.DESeq2.genes"      # working directory for the R session
 
 projectName <- "SARTools.DESeq2.genes"                         # name of the project
 author <- "Riley McDonnell"                                # author of the statistical analysis/report
