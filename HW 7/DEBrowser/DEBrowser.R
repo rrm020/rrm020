@@ -14,7 +14,7 @@ library(debrowser)
 if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 
 # List the count files. You may need to change the path and pattern to match your files.
-genefilelist <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.genes.tsv", full.names=T)
+genefilelist <- list.files(path="HW 7/SART", pattern="*.genes.tsv", full.names=T)
 print(genefilelist)
 genefiles <- lapply(genefilelist, read_tsv)
 
