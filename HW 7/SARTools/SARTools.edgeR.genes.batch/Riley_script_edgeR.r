@@ -20,10 +20,9 @@ if (!require("SARTools")) install_github("KField-Bucknell/SARTools", build_vigne
 ################################################################################
 rm(list=ls())                                        # remove all the objects from the R session
 
-workDir <- "/Users/kfield/Documents/Biology364-2020/02-Assignments/Project03/SARTools/SARTools.edgeR.genes"      # working directory for the R session
-
+workDir <- "/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/SARTools/SARTools.edgeR.genes"
 projectName <- "SARTools.edgeR.genes"                         # name of the project
-author <- "Bruce Wayne"                                # author of the statistical analysis/report
+author <- "Riley McDonnell"                                # author of the statistical analysis/report
 
 targetFile <- "../genes.target.txt"                           # path to the design/target file
 rawDir <- "../"                                      # path to the directory containing raw counts files
