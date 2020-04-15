@@ -20,9 +20,9 @@ if (!require("SARTools")) install_github("KField-Bucknell/SARTools", build_vigne
 ################################################################################
 rm(list=ls())                                        # remove all the objects from the R session
 
-workDir <- "C:/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/SARTools/SARTools.DESeq2.genes"      # working directory for the R session
+workDir <- "/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/SARTools/SARTools.DESeq2.genes"      # working directory for the R session
 
-getprojectName <- "SARTools.DESeq2.genes"                         # name of the project
+projectName <- "SARTools.DESeq2.genes"                         # name of the project
 author <- "Riley McDonnell"                                # author of the statistical analysis/report
 
 targetFile <- "../genes.target.txt"                           # path to the design/target file
