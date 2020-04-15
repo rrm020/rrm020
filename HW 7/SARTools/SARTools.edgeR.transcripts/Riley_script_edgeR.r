@@ -20,11 +20,11 @@ if (!require("SARTools")) install_github("KField-Bucknell/SARTools", build_vigne
 ################################################################################
 rm(list=ls())                                        # remove all the objects from the R session
 
-workDir <- "/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/SARTools/SARTools.edgeR.genes"
-projectName <- "SARTools.edgeR.genes"                         # name of the project
+workDir <- "/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/SARTools/SARTools.edgeR.transcripts"
+projectName <- "SARTools.edgeR.transcripts"                         # name of the project
 author <- "Riley McDonnell"                                # author of the statistical analysis/report
 
-targetFile <- "../genes.target.txt"                           # path to the design/target file
+targetFile <- "../transcripts.target.txt"                           # path to the design/target file
 rawDir <- "../"                                      # path to the directory containing raw counts files
 featuresToRemove <- NULL
 
@@ -95,3 +95,4 @@ writeReport.edgeR(target=target, counts=counts, out.edgeR=out.edgeR, summaryResu
                   targetFile=targetFile, rawDir=rawDir, featuresToRemove=featuresToRemove, varInt=varInt,
                   condRef=condRef, batch=batch, alpha=alpha, pAdjustMethod=pAdjustMethod, cpmCutoff=cpmCutoff,
                   colors=colors, gene.selection=gene.selection, normalizationMethod=normalizationMethod)
+
