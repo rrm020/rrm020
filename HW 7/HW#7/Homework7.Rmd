@@ -1,7 +1,7 @@
 ---
 title: "Homework 7"
-author: "Biology Student"
-date: "1 Apr 2020"
+author: "Riley McDonnell"
+date: "6 Apr 2020"
 output: github_document
 ---
 
@@ -61,29 +61,16 @@ You are looking for the "Flybase ID".
 
 Below I demonstrate how to load in both, but you only need to use one or the other.
 
+3. Determine if the Pasilla gene was differentially expressed in the treated samples.
 ```{r Loading in Data}
-# DESeq2
-DESeq2_genes_complete <- read_delim("SARTools/SARTools.DESeq2.genes/tables/RNAivsUntreated.complete.txt", 
-    "\t", escape_double = FALSE, trim_ws = TRUE)
-# Check that numbers agree with SARTools Report
-DESeq2_genes_complete %>% dplyr::filter(padj < 0.05) %>% tally()
-DESeq2_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FoldChange > 1) %>% tally()
-DESeq2_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FoldChange < 1) %>% tally()
-
 # edgeR
-edgeR_genes_complete <- read_delim("SARTools/SARTools.edgeR.genes/tables/RNAivsUntreated.complete.txt", 
+edgeR_genes_complete <- read_delim("SARTools.edgeR.genes.batch/tables/RNAivsUntreated.complete.txt", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 # Check that numbers agree with SARTools Report
 edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% tally()
 edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FC > 1) %>% tally()
 edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FC < 1) %>% tally()
-```
 
-3. Determine if the Pasilla gene was differentially expressed in the treated samples.
-
-```{r Loading in Data}
-# Looking for a specific gene
-DESeq2_genes_complete %>% dplyr::filter(Id == "FBgn0261552")
 edgeR_genes_complete %>% dplyr::filter(Id == "FBgn0261552")
 ```
 
