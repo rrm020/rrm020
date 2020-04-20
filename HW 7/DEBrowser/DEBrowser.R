@@ -18,10 +18,11 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 #No genes are produced with Kallisto- just transcripts
 
 ### Now repeat all of that for the transcript files
+getwd()
 
-transcriptfilelist <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.transcripts.tsv", full.names=T)
+transcriptfilelist <- list.files(path="/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser", pattern="*.transcripts.tsv", full.names=T)
 transcriptfiles <- lapply(transcriptfilelist, read_tsv)
-transcriptfilenames <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.transcripts.tsv", full.names=F)
+transcriptfilenames <- list.files(path="/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser", pattern="*.transcripts.tsv", full.names=F)
 
 samplenames <- gsub("S2_DRSC_CG8144_", "", transcriptfilenames)
 samplenames <- gsub("S2_DRSC_","", samplenames)
@@ -32,15 +33,16 @@ samplenames
 
 transcriptfiles %>%
   bind_cols() %>%
-  select(Name, starts_with("NumReads")) -> transcripttable
+  select(target_id, starts_with("est_counts")) -> transcripttable
 colnames(transcripttable)[2:7] <- as.list(samplenames)
+
 
 head(transcripttable)
 str(transcripttable)
 write_tsv(transcripttable, path="transcripttable.tsv")
 
 ## Also need to reformat the target.txt file to match the sample names
-transcripts_target <- read_delim("02-Assignments/Project03/SARTools/transcripts.target.txt", 
+transcripts_target <- read_delim("/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser/transcipts.target.txt", 
                                  "\t", escape_double = FALSE, trim_ws = TRUE)
 transcripts_target
 colnames(transcripttable) <- gsub("-","_", colnames(transcripttable))
