@@ -53,9 +53,7 @@ metadata <- select(transcripts_target, c(label, batch, Treatment))
 colnames(metadata) <- c("sample","batch","condition")
 write_tsv(metadata, path="metadata.tsv")
 metadata
-
 colnames(transcripttable)[2:7] == metadata$sample
-
 
 # 4. Start DEBrowser
 
@@ -64,12 +62,13 @@ if (!require("org.Dm.eg.db")) BiocManager::install("org.Dm.eg.db"); library(org.
 
 startDEBrowser()
 
+
 # 5. Data Exploration with DE Browser
 
 #1 Load the Count Data File and the Metadata File
 #2 Filter the data using CPM, CPM<1, in at least 3 samples (half of the samples)
 #3 Batch correct the data using TMM normalization, Combat correction method, condition as Treatment, batch as Batch
-#4 Visualize the PCA plot by changing Color field to "condition", and Shape field to "batch"
+#4 Visualize the PCA plot by changing Color field to "treatment", and Shape field to "batch"
 #5 Go to DE Analysis and Add New Comparison
 #   Set the Condition 1 samples to the Untreated and Condition 2 to the RNAi samples
 #   Chose the appropriate DE Method, and leave the parameters on the default settings
