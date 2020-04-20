@@ -19,6 +19,7 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 
 ### Now repeat all of that for the transcript files
 getwd()
+setwd("/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser")
 
 transcriptfilelist <- list.files(path="/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser", pattern="*.transcripts.tsv", full.names=T)
 transcriptfiles <- lapply(transcriptfilelist, read_tsv)
@@ -42,8 +43,7 @@ str(transcripttable)
 write_tsv(transcripttable, path="transcripttable.tsv")
 
 ## Also need to reformat the target.txt file to match the sample names
-transcripts_target <- read_delim("/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser/transcipts.target.txt", 
-                                 "\t", escape_double = FALSE, trim_ws = TRUE)
+transcripts_target <- read_delim("/Users/rileymcdonnell/Desktop/Biology 364/rrm020/HW 7/DEBrowser/transcripts.target.txt","\t", escape_double = FALSE, trim_ws = TRUE)
 transcripts_target
 colnames(transcripttable) <- gsub("-","_", colnames(transcripttable))
 colnames(transcripttable)
