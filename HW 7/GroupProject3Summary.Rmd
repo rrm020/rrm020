@@ -1,0 +1,147 @@
+---
+title: "Project 3 Summary"
+authors: "Ken Field, Riley McDonnell, Nellie Heitzman, Rob Han, Go Ogata, Will Snyder, Leila Hashemi, 
+Alyssa Peeples, Fallon Goldberg, Brenna Prevelige, Savannah Weaver, and Alicia Kim"
+date: "14 Apr 2020"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load Libraries, include=FALSE}
+if (!require("knitr")) install.packages("knitr"); library(knitr)
+if (!require("UpSetR")) install.packages("UpSetR"); library(UpSetR)
+if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse) # Load tidyverse last
+```
+
+## Project 3 Pipelines
+
+| Name             | Github.Username  | Email.Address          | Pipeline          |
+| :--------------- | :--------------- | :--------------------- | :---------------- |
+| Riley McDonnell  | rrm020           | <rrm020@bucknell.edu>  | kallisto-\>DESeq2 |
+| Nellie Heitzman  | Nellie001        | <nskh001@bucknell.edu> | Salmon-\>limma    |
+| Owen LaFramboise | olaframboise     | <oll001@bucknell.edu>  | kallisto-\>edgeR  |
+| Rob Han          | roberthjhan      | <rhh026@bucknell.edu>  | Sailfish-\>DESeq2 |
+| Go Ogata         | go001            | <go001@bucknell.edu>   | STAR-\>limma      |
+| Will Snyder      | wsnyder4         | <wes021@bucknell.edu>  | STAR-\>edgeR      |
+| Leila Hashemi    | ly94-bot         | <lh046@bucknell.edu>   | Sailfish-\>limma  |
+| Alyssa Peeples   | apeeples13       | <amp030@bucknell.edu>  | Salmon-\>DESeq2   |
+| Fallon Goldberg  | fallongoldberg   | <feg003@bucknell.edu>  | kallisto-\>limma  |
+| Brenna Prevelige | brp006           | <brp006@bucknell.edu>  | Sailfish-\>edgeR  |
+| Savannah Weaver  | science-with-sav | <sjw018@bucknell.edu>  | STAR-\>DESeq2     |
+| Alicia Kim       | ak039            | <ak039@bucknell.edu>   | Salmon-\>edgeR    |
+
+```{r Loading Data}
+# Batch Comparison
+batchfilelist <- list.files(path = "BatchResults", pattern = "*.csv", full.names = T)
+batchfilenames <- list.files(path = "BatchResults", pattern = "*.csv", full.names = F)
+batchfiles <- lapply(batchfilelist, read_csv)
+batchfilenames <- gsub(".csv", "", batchfilenames)
+names(batchfiles) <- batchfilenames
+allbatchresults <- bind_rows(batchfiles, .id = "column_label")
+
+# Genes
+genefilelist <- list.files(path = "GeneResults", pattern = "*.csv", full.names = T)
+genefilenames <- list.files(path = "GeneResults", pattern = "*.csv", full.names = F)
+genefiles <- lapply(genefilelist, read_csv)
+genefilenames <- gsub(".csv", "", genefilenames)
+names(genefiles) <- genefilenames
+allgeneresults <- bind_rows(genefiles, .id = "column_label")
+
+# Transcripts
+transcriptfilelist <- list.files(path = "TranscriptResults", pattern = "*.csv", full.names = T)
+transcriptfilenames <- list.files(path = "TranscriptResults", pattern = "*.csv", full.names = F)
+transcriptfiles <- lapply(transcriptfilelist, read_csv)
+transcriptfilenames <- gsub(".csv", "", transcriptfilenames)
+names(transcriptfiles) <- transcriptfilenames
+alltranscriptresults <- bind_rows(transcriptfiles, .id = "column_label")
+```
+
+
+### Gene Comparisons
+
+```{r}
+# Verify that each results table has expected padj and fold change cutoffs
+allbatchresults %>%
+  group_by(column_label) %>%
+  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
+
+# Count the number of genes differentially expressed
+allbatchresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "DOWN")) %>%
+  summarize(Down = length(ID)) -> batch_summary_down
+allbatchresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "UP")) %>%
+  summarize(Up = length(ID)) -> batch_summary_up
+
+#Combine
+batch_summary_down$column_label <- gsub(".DOWN", "", batch_summary_down$column_label)
+batch_summary_up$column_label <- gsub(".UP", "", batch_summary_up$column_label)
+batch_summary <- merge(batch_summary_up, batch_summary_down, by = "column_label")
+batch_summary <- rename(batch_summary, Pipeline = column_label)
+batch_summary
+```
+
+### Gene Comparisons
+
+Repeat the above summary for the transcript-level differential expression.
+
+```{r}
+
+```
+
+### Transcript Comparisons
+
+Repeat the above summary for the transcript-level differential expression.
+
+```{r}
+
+```
+
+Which pipeline resulted in the greatest numbers of genes meeting the padj and fc cutoffs?
+
+Does that necessarily mean that this pipeline was the "best"?
+
+### Pipeline comparison
+
+Compare the transcripts or genes identified in your pipeline to at least one other pipeline.
+
+We could use a Venn diagram to make this comparison, but like pie charts these are not always the best visualization.
+
+The UpSetR package includes better tools for visualizing the intersections of multiple sets. 
+https://cran.rstudio.com/web/packages/UpSetR/vignettes/basic.usage.html
+
+The following code plots the intersection between the Gene results for all of the files loaded. 
+
+Use this example to compare your pipeline DE results to another pipeline.
+
+```{r}
+de_batch <- allbatchresults %>% 
+  dplyr::select(Pipeline = column_label, ID)
+
+intersection <- de_batch %>% mutate(value =1) %>% spread(Pipeline, value, fill =0 )
+head(intersection)
+intersection <- as.data.frame(intersection)
+upset(intersection)
+upset(intersection, empty.intersections = "on", order.by = "freq")
+```
+
+
+## Acknowledgements
+
+Using lapply() to run functions over a list: https://astrostatistics.psu.edu/su07/R/html/base/html/lapply.html
+
+Converting a list into a single data frame: https://stackoverflow.com/questions/2851327/convert-a-list-of-data-frames-into-one-data-frame
+
+UpSetR: https://cran.rstudio.com/web/packages/UpSetR/
+
+Converting gene lists into UpSetR format: https://crazyhottommy.blogspot.com/2016/01/upset-plot-for-overlapping-chip-seq.html
+
+Upset plots for genome analysis: https://genomespot.blogspot.com/2017/09/upset-plots-as-replacement-to-venn.html 
