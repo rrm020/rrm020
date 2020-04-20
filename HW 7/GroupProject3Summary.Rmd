@@ -62,7 +62,6 @@ names(transcriptfiles) <- transcriptfilenames
 alltranscriptresults <- bind_rows(transcriptfiles, .id = "column_label")
 ```
 
-
 ### Gene Comparisons
 
 ```{r}
@@ -94,7 +93,24 @@ batch_summary
 Repeat the above summary for the transcript-level differential expression.
 
 ```{r}
-
+allgeneresults %>%
+  group_by(column_label) %>%
+  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
+# Count the number of genes differentially expressed
+allgeneresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "DOWN")) %>%
+  summarize(Down = length(ID)) -> gene_summary_down
+allgeneresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "UP")) %>%
+  summarize(Up = length(ID)) -> gene_summary_up
+#Combine
+gene_summary_down$column_label <- gsub(".DOWN", "", gene_summary_down$column_label)
+gene_summary_up$column_label <- gsub(".UP", "", gene_summary_up$column_label)
+gene_summary <- merge(gene_summary_up, gene_summary_down, by = "column_label")
+gene_summary <- rename(gene_summary, Pipeline = column_label)
+gene_summary
 ```
 
 ### Transcript Comparisons
@@ -102,7 +118,25 @@ Repeat the above summary for the transcript-level differential expression.
 Repeat the above summary for the transcript-level differential expression.
 
 ```{r}
-
+# Verify that each results table has expected padj and fold change cutoffs
+alltranscriptresults %>%
+  group_by(column_label) %>%
+  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
+# Count the number of genes differentially expressed
+alltranscriptresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "DOWN")) %>%
+  summarize(Down = length(ID)) -> transcript_summary_down
+alltranscriptresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "UP")) %>%
+  summarize(Up = length(ID)) -> transcript_summary_up
+#Combine
+transcript_summary_down$column_label <- gsub(".DOWN", "", transcript_summary_down$column_label)
+transcript_summary_up$column_label <- gsub(".UP", "", transcript_summary_up$column_label)
+transcript_summary <- merge(transcript_summary_up, transcript_summary_down, by = "column_label")
+transcript_summary <- rename(transcript_summary, Pipeline = column_label)
+transcript_summary
 ```
 
 Which pipeline resulted in the greatest numbers of genes meeting the padj and fc cutoffs?
@@ -132,6 +166,28 @@ intersection <- as.data.frame(intersection)
 upset(intersection)
 upset(intersection, empty.intersections = "on", order.by = "freq")
 ```
+
+```{r}
+de_transcripts <- alltranscriptresults %>% 
+  dplyr::select(Pipeline = column_label, ID)%>%
+  dplyr::filter(grepl("Kallisto", Pipeline))
+intersection <- de_transcripts %>% mutate(value =1) %>% spread(Pipeline, value, fill =0 )
+head(intersection)
+intersection <- as.data.frame(intersection)
+upset(intersection)
+upset(intersection, empty.intersections = "on", order.by = "freq")
+```
+```{r Kallisto comparison}
+de_transcripts <- alltranscriptresults %>% 
+  dplyr::select(Pipeline = column_label, ID)%>%
+  dplyr::filter(grepl("DESeq2", Pipeline))
+intersection <- de_transcripts %>% mutate(value =1) %>% spread(Pipeline, value, fill =0 )
+head(intersection)
+intersection <- as.data.frame(intersection)
+upset(intersection)
+upset(intersection, empty.intersections = "on", order.by = "freq")
+```
+
 
 
 ## Acknowledgements
