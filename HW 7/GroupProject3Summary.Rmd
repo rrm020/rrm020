@@ -93,10 +93,27 @@ batch_summary
 
 ### Gene Comparisons
 
-Repeat the above summary for the transcript-level differential expression.
 
 ```{r}
-
+# Verify that each results table has expected padj and fold change cutoffs
+allgeneresults %>%
+  group_by(column_label) %>%
+  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
+# Count the number of genes differentially expressed
+allgeneresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "DOWN")) %>%
+  summarize(Down = length(ID)) -> gene_summary_down
+allgeneresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "UP")) %>%
+  summarize(Up = length(ID)) -> gene_summary_up
+#Combine
+gene_summary_down$column_label <- gsub(".DOWN", "", gene_summary_down$column_label)
+gene_summary_up$column_label <- gsub(".UP", "", gene_summary_up$column_label)
+gene_summary <- merge(gene_summary_up, gene_summary_down, by = "column_label")
+gene_summary <- rename(gene_summary, Pipeline = column_label)
+gene_summary
 ```
 
 ### Transcript Comparisons
@@ -104,13 +121,31 @@ Repeat the above summary for the transcript-level differential expression.
 Repeat the above summary for the transcript-level differential expression.
 
 ```{r}
-
+# Verify that each results table has expected padj and fold change cutoffs
+alltranscriptresults %>%
+  group_by(column_label) %>%
+  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
+# Count the number of genes differentially expressed
+alltranscriptresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "DOWN")) %>%
+  summarize(Down = length(ID)) -> transcript_summary_down
+alltranscriptresults %>%
+  group_by(column_label) %>%
+  dplyr::filter(str_detect(column_label, "UP")) %>%
+  summarize(Up = length(ID)) -> transcript_summary_up
+#Combine
+transcript_summary_down$column_label <- gsub(".DOWN", "", transcript_summary_down$column_label)
+transcript_summary_up$column_label <- gsub(".UP", "", transcript_summary_up$column_label)
+transcript_summary <- merge(transcript_summary_up, transcript_summary_down, by = "column_label")
+transcript_summary <- rename(transcript_summary, Pipeline = column_label)
+transcript_summary
 ```
 
 Which pipeline resulted in the greatest numbers of genes meeting the padj and fc cutoffs?
-
+Salmon DESeq2 pipline seemed to be closest.
 Does that necessarily mean that this pipeline was the "best"?
-
+No, we aren't sure which one is correct because we are putting the same genetic code through multiple pipelines so there is no correct pipepline. What is helpful is running it through multiple pipelines to get more information.
 ### Pipeline comparison
 
 Compare the transcripts or genes identified in your pipeline to at least one other pipeline.
@@ -134,7 +169,17 @@ intersection <- as.data.frame(intersection)
 upset(intersection)
 upset(intersection, empty.intersections = "on", order.by = "freq")
 ```
-
+#Kallisto Pipeline Comparison
+```{r}
+de_transcripts <- alltranscriptresults %>% 
+  dplyr::select(Pipeline = column_label, ID)%>%
+  dplyr::filter(grepl("DESeq2", Pipeline))
+intersection <- de_transcripts %>% mutate(value =1) %>% spread(Pipeline, value, fill =0 )
+head(intersection)
+intersection <- as.data.frame(intersection)
+upset(intersection)
+upset(intersection, empty.intersections = "on", order.by = "freq")
+```
 
 ## Acknowledgements
 
