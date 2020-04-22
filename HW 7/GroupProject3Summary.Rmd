@@ -21,22 +21,22 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse) # L
 
 ## Project 3 Pipelines
 
-| Name             | Github.Username  | Email.Address          | Pipeline          |
-| :--------------- | :--------------- | :--------------------- | :---------------- |
-| Riley McDonnell  | rrm020           | <rrm020@bucknell.edu>  | kallisto-\>DESeq2 |
-| Nellie Heitzman  | Nellie001        | <nskh001@bucknell.edu> | Salmon-\>limma    |
-| Owen LaFramboise | olaframboise     | <oll001@bucknell.edu>  | kallisto-\>edgeR  |
-| Rob Han          | roberthjhan      | <rhh026@bucknell.edu>  | Sailfish-\>DESeq2 |
-| Go Ogata         | go001            | <go001@bucknell.edu>   | STAR-\>limma      |
-| Will Snyder      | wsnyder4         | <wes021@bucknell.edu>  | STAR-\>edgeR      |
-| Leila Hashemi    | ly94-bot         | <lh046@bucknell.edu>   | Sailfish-\>limma  |
-| Alyssa Peeples   | apeeples13       | <amp030@bucknell.edu>  | Salmon-\>DESeq2   |
-| Fallon Goldberg  | fallongoldberg   | <feg003@bucknell.edu>  | kallisto-\>limma  |
-| Brenna Prevelige | brp006           | <brp006@bucknell.edu>  | Sailfish-\>edgeR  |
-| Savannah Weaver  | science-with-sav | <sjw018@bucknell.edu>  | STAR-\>DESeq2     |
-| Alicia Kim       | ak039            | <ak039@bucknell.edu>   | Salmon-\>edgeR    |
+| Name             | Github.Username  | Email.Address          | Pipeline          | Output    |
+| :--------------- | :--------------- | :--------------------- | :---------------- | :-------- |
+| Riley McDonnell  | rrm020           | <rrm020@bucknell.edu>  | kallisto-\>DESeq2 | Trans     |
+| Nellie Heitzman  | Nellie001        | <nskh001@bucknell.edu> | Salmon-\>limma    | Both      |
+| Owen LaFramboise | olaframboise     | <oll001@bucknell.edu>  | kallisto-\>edgeR  | Both      |
+| Rob Han          | roberthjhan      | <rhh026@bucknell.edu>  | Sailfish-\>DESeq2 | Both      |
+| Go Ogata         | go001            | <go001@bucknell.edu>   | STAR-\>limma      | Genes     |
+| Will Snyder      | wsnyder4         | <wes021@bucknell.edu>  | STAR-\>edgeR      | Genes     |
+| Leila Hashemi    | ly94-bot         | <lh046@bucknell.edu>   | Sailfish-\>limma  | Both      |
+| Alyssa Peeples   | apeeples13       | <amp030@bucknell.edu>  | Salmon-\>DESeq2   | Both      |
+| Fallon Goldberg  | fallongoldberg   | <feg003@bucknell.edu>  | kallisto-\>limma  | Trans     |
+| Brenna Prevelige | brp006           | <brp006@bucknell.edu>  | Sailfish-\>edgeR  | Both      |
+| Savannah Weaver  | science-with-sav | <sjw018@bucknell.edu>  | STAR-\>DESeq2     | Genes     |
+| Alicia Kim       | ak039            | <ak039@bucknell.edu>   | Salmon-\>edgeR    | Both      |
 
-```{r Loading Data}
+```{r Loading Data, message = FALSE}
 # Batch Comparison
 batchfilelist <- list.files(path = "BatchResults", pattern = "*.csv", full.names = T)
 batchfilenames <- list.files(path = "BatchResults", pattern = "*.csv", full.names = F)
@@ -62,6 +62,9 @@ names(transcriptfiles) <- transcriptfilenames
 alltranscriptresults <- bind_rows(transcriptfiles, .id = "column_label")
 ```
 
+Note that `message = FALSE` was set to avoid outputting all of the column specifications.
+Remove that option if you need to debug the column types.
+
 ### Gene Comparisons
 
 ```{r}
@@ -73,11 +76,11 @@ allbatchresults %>%
 # Count the number of genes differentially expressed
 allbatchresults %>%
   group_by(column_label) %>%
-  dplyr::filter(str_detect(column_label, "DOWN")) %>%
+  dplyr::filter(str_detect(column_label, regex("DOWN", ignore_case = T))) %>%
   summarize(Down = length(ID)) -> batch_summary_down
 allbatchresults %>%
   group_by(column_label) %>%
-  dplyr::filter(str_detect(column_label, "UP")) %>%
+  dplyr::filter(str_detect(column_label, regex("UP", ignore_case = T))) %>%
   summarize(Up = length(ID)) -> batch_summary_up
 
 #Combine
@@ -93,24 +96,7 @@ batch_summary
 Repeat the above summary for the transcript-level differential expression.
 
 ```{r}
-allgeneresults %>%
-  group_by(column_label) %>%
-  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
-# Count the number of genes differentially expressed
-allgeneresults %>%
-  group_by(column_label) %>%
-  dplyr::filter(str_detect(column_label, "DOWN")) %>%
-  summarize(Down = length(ID)) -> gene_summary_down
-allgeneresults %>%
-  group_by(column_label) %>%
-  dplyr::filter(str_detect(column_label, "UP")) %>%
-  summarize(Up = length(ID)) -> gene_summary_up
-#Combine
-gene_summary_down$column_label <- gsub(".DOWN", "", gene_summary_down$column_label)
-gene_summary_up$column_label <- gsub(".UP", "", gene_summary_up$column_label)
-gene_summary <- merge(gene_summary_up, gene_summary_down, by = "column_label")
-gene_summary <- rename(gene_summary, Pipeline = column_label)
-gene_summary
+
 ```
 
 ### Transcript Comparisons
@@ -118,25 +104,7 @@ gene_summary
 Repeat the above summary for the transcript-level differential expression.
 
 ```{r}
-# Verify that each results table has expected padj and fold change cutoffs
-alltranscriptresults %>%
-  group_by(column_label) %>%
-  summarise(max_padj = max(padj), min_foldchange = min(foldChange), max_foldchange = max(foldChange))
-# Count the number of genes differentially expressed
-alltranscriptresults %>%
-  group_by(column_label) %>%
-  dplyr::filter(str_detect(column_label, "DOWN")) %>%
-  summarize(Down = length(ID)) -> transcript_summary_down
-alltranscriptresults %>%
-  group_by(column_label) %>%
-  dplyr::filter(str_detect(column_label, "UP")) %>%
-  summarize(Up = length(ID)) -> transcript_summary_up
-#Combine
-transcript_summary_down$column_label <- gsub(".DOWN", "", transcript_summary_down$column_label)
-transcript_summary_up$column_label <- gsub(".UP", "", transcript_summary_up$column_label)
-transcript_summary <- merge(transcript_summary_up, transcript_summary_down, by = "column_label")
-transcript_summary <- rename(transcript_summary, Pipeline = column_label)
-transcript_summary
+
 ```
 
 Which pipeline resulted in the greatest numbers of genes meeting the padj and fc cutoffs?
@@ -166,28 +134,6 @@ intersection <- as.data.frame(intersection)
 upset(intersection)
 upset(intersection, empty.intersections = "on", order.by = "freq")
 ```
-
-```{r}
-de_transcripts <- alltranscriptresults %>% 
-  dplyr::select(Pipeline = column_label, ID)%>%
-  dplyr::filter(grepl("Kallisto", Pipeline))
-intersection <- de_transcripts %>% mutate(value =1) %>% spread(Pipeline, value, fill =0 )
-head(intersection)
-intersection <- as.data.frame(intersection)
-upset(intersection)
-upset(intersection, empty.intersections = "on", order.by = "freq")
-```
-```{r Kallisto comparison}
-de_transcripts <- alltranscriptresults %>% 
-  dplyr::select(Pipeline = column_label, ID)%>%
-  dplyr::filter(grepl("DESeq2", Pipeline))
-intersection <- de_transcripts %>% mutate(value =1) %>% spread(Pipeline, value, fill =0 )
-head(intersection)
-intersection <- as.data.frame(intersection)
-upset(intersection)
-upset(intersection, empty.intersections = "on", order.by = "freq")
-```
-
 
 
 ## Acknowledgements
