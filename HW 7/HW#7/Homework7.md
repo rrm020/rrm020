@@ -1,0 +1,278 @@
+Homework 7
+================
+Riley McDonnell
+6 Apr 2020
+
+## Loading Libraries
+
+## Prerequisites for Homework 7
+
+1.  Completion of the [Galaxy](1-Galaxy.md) and
+    [SARTools](2-SARTools.md) tutorials.
+2.  Results from either EdgeR or DESeq2 analysis of differential
+    **gene** expression of the Pasilla dataset (after batch effect
+    correction)
+3.  Results from the EdgeR and DESeq2 analysis of differential
+    **transcript** expression of the Pasilla dataset (after batch effect
+    correction)
+
+## Batch Correction in SARTools
+
+As we noted during the previous lab, the Single and Paired samples were
+quite different in the Pasilla dataset. This difference was a problem
+because it was not related to the hypothesis: that transcript expression
+would be affected by RNAi treatment. For this reason, we want to block
+the effects of sequencing layout on the experimental design by using
+batch correction. In SARTools this is done simply by providing a column
+in the target.txt file that contains the batch information and then
+setting `batch` to that column name. You should run the SARTools
+analysis again after setting batch \<- “batch” and changing the working
+directory to a new directory (like “SARTools.DESeq2.genes.batch”). You
+will need to also make that directory in the Files panel. Lastly, you
+should probably change the project name to something like
+“SARTools.DESeq2.genes.batch”.
+
+## Transcript Expression
+
+Because we expect Pasilla knockdown to affect alternative splicing, we
+need to look at transcript expression and not just gene expression. Run
+the DESeq2 and edgeR analyses using transcripts instead of genes. (You
+will still need to use batch correction.) Don’t forget to make new
+directories for the output and give the project a new name so that the
+previous files don’t get overwritten.
+
+## Objectives
+
+\[ \] Compare the number of genes differentially expressed before and
+after batch correction \[ \] Confirm whether Pasilla gene expression was
+knocked down by the RNAi treatment \[ \] Compare the differential
+transcript expression detected by edgeR and DESeq2
+
+## Batch Correction
+
+Compare the SARTools Report for one of the analyses with and without
+batch correction. In one or two sentences, summarize the difference that
+batch correction made in the PCA plot and the number of differentially
+expressed genes.
+
+## Pasilla Gene Analysis
+
+1.  Use <http://flybase.org/> to determine the FlyBase **gene** name for
+    the Pasilla gene.
+
+You are looking for the “Flybase ID”.
+
+2.  Load in the gene expression results from either EdgeR or DESeq2.
+
+Below I demonstrate how to load in both, but you only need to use one or
+the other.
+
+3.  Determine if the Pasilla gene was differentially expressed in the
+    treated
+samples.
+
+<!-- end list -->
+
+``` r
+RNAivsUntreated_complete <- read_delim("SARTools.edgeR.genes.batch/tables/RNAivsUntreated.complete.txt",
+   "\t", escape_double = FALSE, trim_ws = TRUE)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   Id = col_character()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
+names(RNAivsUntreated_complete)
+```
+
+    ##  [1] "Id"                 "Ctrl1"              "Ctrl3"             
+    ##  [4] "Ctrl4"              "RNAi1"              "RNAi3"             
+    ##  [7] "RNAi4"              "norm.Ctrl1"         "norm.Ctrl3"        
+    ## [10] "norm.Ctrl4"         "norm.RNAi1"         "norm.RNAi3"        
+    ## [13] "norm.RNAi4"         "baseMean"           "Untreated"         
+    ## [16] "RNAi"               "FC"                 "log2FoldChange"    
+    ## [19] "pvalue"             "padj"               "tagwise.dispersion"
+    ## [22] "trended.dispersion"
+
+``` r
+# Check that numbers agree with SARTools Report     
+RNAivsUntreated_complete %>%
+ dplyr::filter(padj < 0.05) %>%
+ tally() # result: 1998
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1  1998
+
+``` r
+RNAivsUntreated_complete %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC > 1) %>% # FC == FoldChange
+ tally() # result: 1026
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1  1026
+
+``` r
+RNAivsUntreated_complete %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC < 1) %>% # FC == FoldChange
+ tally() # result: 972
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1   972
+
+``` r
+# determine differential expression
+RNAivsUntreated_complete %>%
+ dplyr::filter(Id == "FBgn0261552")
+```
+
+    ## # A tibble: 1 x 22
+    ##   Id    Ctrl1 Ctrl3 Ctrl4 RNAi1 RNAi3 RNAi4 norm.Ctrl1 norm.Ctrl3 norm.Ctrl4
+    ##   <chr> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>      <dbl>      <dbl>      <dbl>
+    ## 1 FBgn… 22518  5916  5184  6734  1604  1703      12898      10389       8334
+    ## # … with 12 more variables: norm.RNAi1 <dbl>, norm.RNAi3 <dbl>,
+    ## #   norm.RNAi4 <dbl>, baseMean <dbl>, Untreated <dbl>, RNAi <dbl>, FC <dbl>,
+    ## #   log2FoldChange <dbl>, pvalue <dbl>, padj <dbl>, tagwise.dispersion <dbl>,
+    ## #   trended.dispersion <dbl>
+
+``` r
+# need to look at normalized values
+```
+
+Yes, the control and RNAi-treated samples have differential expression.
+The normalized controls express pasilla much more than the normalized
+treatment values, so the RNAi treatment down-regulates pasilla. The
+overall fold change is a decrease. The magnitude of change in both the
+normalized expression and the fold change is very large, and our
+adjusted p-value is incredibly small. So, we can be confident that the
+RNAi treatment down-regulates pasilla.
+
+## Comparison of EdgeR and DESeq2
+
+1.  Load in the transcript expression results from both EdgeR and
+    DESeq2.
+2.  Determine the number of differentially expressed transcripts
+    detected by each program.
+3.  Compare the identity of the transcripts differentially
+expressed.
+
+<!-- end list -->
+
+``` r
+edgeR_transcript <- read_delim("SARTools.edgeR.transcripts.batch/tables/RNAivsUntreated.complete.txt", "\t", escape_double = FALSE, trim_ws = TRUE)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   Id = col_character()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
+dim(edgeR_transcript) # 30061
+```
+
+    ## [1] 30061    22
+
+``` r
+edgeR_transcript_up <- edgeR_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC > 1)
+edgeR_transcript_down <- edgeR_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC < 1)
+
+
+# DESeq2
+DESeq2_transcript <- read_delim("SARTools.DESeq2.transcripts.batch/tables/RNAivsUntreated.complete.txt", "\t", escape_double = FALSE, trim_ws = TRUE)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   Id = col_character(),
+    ##   betaConv = col_logical(),
+    ##   maxCooks = col_logical()
+    ## )
+    ## See spec(...) for full column specifications.
+
+``` r
+dim(DESeq2_transcript) # 30061
+```
+
+    ## [1] 30061    27
+
+``` r
+DESeq2_transcript_up <- DESeq2_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FoldChange > 1)
+DESeq2_transcript_down <- DESeq2_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FoldChange < 1)
+```
+
+``` r
+# up regulated
+edgeR_transcript_up$Id %in% DESeq2_transcript_up$Id %>% sum() # 607
+```
+
+    ## [1] 607
+
+``` r
+(!edgeR_transcript_up$Id %in% DESeq2_transcript_up$Id) %>% sum() # 95
+```
+
+    ## [1] 95
+
+``` r
+#down regulated
+edgeR_transcript_down$Id %in% DESeq2_transcript_down$Id %>% sum() # 653
+```
+
+    ## [1] 653
+
+``` r
+(!edgeR_transcript_down$Id %in% DESeq2_transcript_down$Id) %>% sum() # 91
+```
+
+    ## [1] 91
+
+Yes, many genes were differentially expressed, and the edgeR and DESeq2
+methods each found slightly different results.
+
+Bonus, if you are feeling brave. Look for a new package that allows you
+to make Venn diagrams of the differentially expressed transcripts.
+
+## Helpful RNA-Seq Links
+
+Pasilla paper: <https://genome.cshlp.org/content/21/2/193.full>
+
+RNA-seqlopedia: <https://rnaseq.uoregon.edu/>
+
+RNA-Seq Blog: <http://www.rna-seqblog.com/>
+
+QCFAIL Blog: <https://sequencing.qcfail.com/> (Unfortunately it looks
+like they are no longer posting, but they have some great posts about
+problems with certain Illumina sequencers.)
+
+QCFAIL post about SRA file corruption:
+<https://sequencing.qcfail.com/articles/data-can-be-corrupted-upon-extraction-from-sra-files/>
+(This is why it is so important to look at the raw fastq files and check
+the lengths of the reads before trimming.)
