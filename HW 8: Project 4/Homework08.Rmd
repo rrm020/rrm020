@@ -71,11 +71,11 @@ They mention using Agilent to look at the size and quality of the samples which 
 How was the data cleaned (trimmed) and checked for quality? Were any samples excluded (and, if so, why)?
 
 The illumina files were then converted into FASTQC files, and then run through trimmomatic to cut of the bar code and primer sequences. Based on the similarity of each sequences they were assigned operational taxonomic units (OTUs). No samples were excluded and from those initial cleaning steps the data went through many other steps looking for bio markers and statistical significance.
+They also used t test, ANOVA, chi-square test between two groups and among multiple groups. Statistical significance was defined as P < .05.
 
+5. Mapping program used.Finally, an easy question.
 
-5. Mapping program used
-Finally, an easy question.
- I believe the mapping program used was PICRUSt because the took their OTU results and put them into this software which then produced most their data.
+Illumina was the main mapping program, but I believe PICRUSt was also used because the took their OTU results and put them into this software which then produced most their data.
 
 6. DE analysis performed
 What program was used? What cutoff values were used? Was more than one DE program used? (If so, how were results presented?)

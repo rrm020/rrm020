@@ -1,0 +1,145 @@
+Homework 08
+================
+Riley McDonnell
+20 Apr 2020
+
+## Objectives
+
+For this assignment you will need to characterize several attributes of
+a differential expression transcriptomics study and compare them to the
+study that you are using for Project 4. - \[ \] Differential Expression
+experimental design - \[ \] Sample replication - \[ \] Sequencing depth
+and format - \[ \] Quality control steps performed - \[ \] Mapping
+program used - \[ \] DE analysis performed
+
+## Example paper
+
+RNA-Seq performed by: Frahm KA, Waldman JK, Luthra S, Rudine AC,
+Monaghan-Nichols AP, Chandran UR. A comparison of the sexually dimorphic
+dexamethasone transcriptome in mouse cerebral cortical and hypothalamic
+embryonic neural stem cells. Mol Cell Endocrinol. 2017;
+<https://doi.org/10.1016/j.mce.2017.05.026>.
+
+You can find a copy of this paper in the Readings folder.
+
+Abstract Fetal exposure to synthetic glucocorticoids reprograms distinct
+neural circuits in the developing brain, often in a sex-specific manner,
+via mechanisms that remain poorly understood. To reveal whether such
+reprogramming is associated with select molecular signatures, we
+characterized the transcriptome of primary, embryonic mouse cerebral
+cortical and hypothalamic neural progenitor/stem cells derived from
+individual male and female embryos exposed to the synthetic
+glucocorticoid, dexamethasone. Gene expression profiling by RNA-Seq
+identified differential expression of common and unique genes based upon
+brain region, sex, and/or dexamethasone exposure. These gene expression
+datasets provide a unique resource that will inform future studies
+examining the molecular mechanisms responsible for region- and
+sex-specific reprogramming of the fetal brain brought about by in utero
+exposure to excess glucocorticoids.
+
+Link to the dataset: <https://www.ncbi.nlm.nih.gov/sra/SRP100701>
+
+## Your paper
+
+Link to
+paper:<https://onlinelibrary.wiley.com/doi/epdf/10.1111/hel.12676> Link
+to dataset: <https://www.ncbi.nlm.nih.gov/bioproject/597587> this link
+brings you to the site where the SRA links are listed.
+
+In recent years, the impact of Helicobacter pylori (H. pylori) on the
+gut microbiota has attracted more attention; however, the relationship
+in pediatric population rarely was reported. H. pylori is known to
+impact cancers and a lot of researchers have focused on its impacts
+within adult populations. Children are rarely studied because when kids
+get stomach bugs most doctors don’t typically do any further
+investigating on the impacts of H. pylori in children. The gastric
+mucosal specimens were collected from the 55 pediatric patients and then
+analyzed to look at the sequences of the H. pylori and the overall
+richness of the differing microbiotas. The richness and compositions
+after therapy were closer to the characteristics of H pylori-negative
+children. A higher abundance in pathways of infection diseases, cancer
+and lower abundance in the pathways of amino acid, lipid, and
+carbohydrate metabolism were found in H. pylori-positive group than H.
+pylori-negative group.
+
+## Questions
+
+Answer these questions for each paper. Note that it is okay (well, okay
+for you) if this information is not available in the paper. In that
+case, indicate *NOT FOUND*.
+
+1.  Differential Expression experimental design What was the organism,
+    tissue, and treatment groups? Was there anything special about the
+    RNA isolation procedures?
+
+They used children who showed symptoms of needing a gastroduodenoscopy
+evaluated by pediatrician,and had not consumed antibiotics, probiotics,
+antacid medicine, bismuth, and Chinese medicine with antibacterial
+effect in past 1 month. Those who tested postive underwent a second
+gastroduodenoscopy after receiving treatment. The treatment groups went:
+Group Aa: H pylori-positive without peptic ulcer group; Group Ab: H
+pylori-positive with peptic ulcer group; Group B (control group): H
+pylori-negative group and Group C: 4 weeks after therapy group There was
+nothing notable about the RNA isolation process, they obtained tissue
+samples from the endoscopy and then began preparing the samples within
+two hours of extraction.
+
+2.  Sample replication Were RNA samples pooled? How many individuals
+    were used for each treatment group? What criteria was used to
+    determine if this sample size was sufficient?
+
+There sample size for each group was determined after performing the
+endoscopy on each child so 55 was their initial number for the study but
+it was broken down into 37 of them were H pylori-positive (23 non peptic
+ulcer and 14 peptic ulcer), and 18 were H pylori-negative. In addition,
+11 specimens were collected from H pylori-positive children who
+performed second endoscopy in 4 weeks after therapy. They didn’t
+indicate why 55 children were selected in the first place but I assume
+its based on the criteria they listed. The RNA Samples were pooled as
+indicated by section 2.3.
+
+3.  Sequencing depth and format What was the depth and type of
+    sequencing performed? What criteria was used to determine if this
+    sequencing depth was sufficient?
+
+They mention using Agilent to look at the size and quality of the
+samples which were then run into Illumine. They used a 300 pb paired-end
+protocol with Illumina sequencing primers to format their data to
+prepare them for further analysis. They didn’t mention any criteria for
+the sequencing depth but its seems they used a program to determine the
+quality and size of the samples.
+
+4.  Quality control steps performed How was the data cleaned (trimmed)
+    and checked for quality? Were any samples excluded (and, if so,
+    why)?
+
+The illumina files were then converted into FASTQC files, and then run
+through trimmomatic to cut of the bar code and primer sequences. Based
+on the similarity of each sequences they were assigned operational
+taxonomic units (OTUs). No samples were excluded and from those initial
+cleaning steps the data went through many other steps looking for bio
+markers and statistical significance. They also used t test, ANOVA,
+chi-square test between two groups and among multiple groups.
+Statistical significance was defined as P \< .05.
+
+5.  Mapping program used.Finally, an easy question.
+
+Illumina was the main mapping program, but I believe PICRUSt was also
+used because the took their OTU results and put them into this software
+which then produced most their data.
+
+6.  DE analysis performed What program was used? What cutoff values were
+    used? Was more than one DE program used? (If so, how were results
+    presented?)
+
+Also PICRUSt which compared the samples to the Kyoto Encyclopedia of
+Genes and Genomes. What they also used this for was to get prediction of
+functional pathways from the 16S rRNA reads. A total of 3 482 180 valid
+sequences were obtained from 66 mucosal specimens with 52 760 ± 15 204
+sequences per sample.The OTUs value was lower in H pylori-positive group
+(A) (120 ± 65) than that in H pylori-negative group (B) (317 ± 119) and
+in 4 weeks after therapy group (C) (225.4 ± 107). They used their
+sequences to get profiles an the abundance of gastric microbiota for
+each treatment group and compare them to the control individuals as well
+as make predictions about the pathways from the bacteria found within
+the microbiota.
