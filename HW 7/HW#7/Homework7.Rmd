@@ -63,57 +63,76 @@ Below I demonstrate how to load in both, but you only need to use one or the oth
 
 3. Determine if the Pasilla gene was differentially expressed in the treated samples.
 ```{r Loading in Data}
-# edgeR
-edgeR_genes_complete <- read_delim("SARTools.edgeR.genes.batch/tables/RNAivsUntreated.complete.txt", 
-    "\t", escape_double = FALSE, trim_ws = TRUE)
-# Check that numbers agree with SARTools Report
-edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% tally()
-edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FC > 1) %>% tally()
-edgeR_genes_complete %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(FC < 1) %>% tally()
+RNAivsUntreated_complete <- read_delim("SARTools.edgeR.genes.batch/tables/RNAivsUntreated.complete.txt",
+   "\t", escape_double = FALSE, trim_ws = TRUE)
+names(RNAivsUntreated_complete)
+# Check that numbers agree with SARTools Report     
+RNAivsUntreated_complete %>%
+ dplyr::filter(padj < 0.05) %>%
+ tally() # result: 1998
+RNAivsUntreated_complete %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC > 1) %>% # FC == FoldChange
+ tally() # result: 1026
+RNAivsUntreated_complete %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC < 1) %>% # FC == FoldChange
+ tally() # result: 972
 
-edgeR_genes_complete %>% dplyr::filter(Id == "FBgn0261552")
+
+# determine differential expression
+RNAivsUntreated_complete %>%
+ dplyr::filter(Id == "FBgn0261552")
+# need to look at normalized values
+
 ```
 
-What is the expression level (normalized counts) for each treatement group?
-Untreated:
-RNAi-treated:
-
-What is the fold-change difference in expression level between the two treatment groups?
-
-
-How significant is this difference in expression level?
+Yes, the control and RNAi-treated samples have differential expression. The normalized controls express pasilla much more than the normalized treatment values, so the RNAi treatment down-regulates pasilla. The overall fold change is a decrease. The magnitude of change in both the normalized expression and the fold change is very large, and our adjusted p-value is incredibly small. So, we can be confident that the RNAi treatment down-regulates pasilla.
 
 
 ## Comparison of EdgeR and DESeq2
 
 1. Load in the transcript expression results from both EdgeR and DESeq2.
+2. Determine the number of differentially expressed transcripts detected by each program.
+3. Compare the identity of the transcripts differentially expressed.
 
 ```{r Load transcript results}
+edgeR_transcript <- read_delim("SARTools.edgeR.transcripts.batch/tables/RNAivsUntreated.complete.txt", "\t", escape_double = FALSE, trim_ws = TRUE)
+dim(edgeR_transcript) # 30061
+edgeR_transcript_up <- edgeR_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC > 1)
+edgeR_transcript_down <- edgeR_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FC < 1)
 
+
+# DESeq2
+DESeq2_transcript <- read_delim("SARTools.DESeq2.transcripts.batch/tables/RNAivsUntreated.complete.txt", "\t", escape_double = FALSE, trim_ws = TRUE)
+dim(DESeq2_transcript) # 30061
+DESeq2_transcript_up <- DESeq2_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FoldChange > 1)
+DESeq2_transcript_down <- DESeq2_transcript %>%
+ dplyr::filter(padj < 0.05) %>%
+ dplyr::filter(FoldChange < 1)
 ```
 
-Note that DESeq2 and edgeR have the same raw counts (as expected), but different counts after normalization and different Differential Expression results.
+```{r}
+# up regulated
+edgeR_transcript_up$Id %in% DESeq2_transcript_up$Id %>% sum() # 607
+(!edgeR_transcript_up$Id %in% DESeq2_transcript_up$Id) %>% sum() # 95
 
-2. Determine the number of differentially expressed transcripts detected by each program.
+#down regulated
+edgeR_transcript_down$Id %in% DESeq2_transcript_down$Id %>% sum() # 653
+(!edgeR_transcript_down$Id %in% DESeq2_transcript_down$Id) %>% sum() # 91
 
-Separately tally the significantly (FDR < 0.05) upregulated and downregulated transcripts for each analysis pipeline.
+```
+Yes, many genes were differentially expressed, and the edgeR and DESeq2 methods each found slightly different results.
 
 ```{r}
 
 ```
-
-3. Compare the identity of the transcripts differentially expressed
-
-Do both programs identify exactly the same genes as differentially expressed?
-
-I suggest using the `intersect()` and `setdiff()` functions to compare the list of Ids for each subset of transcripts.
-
-https://stat.ethz.ch/R-manual/R-devel/library/base/html/sets.html
-
-```{r}
-
-```
-
 
 Bonus, if you are feeling brave. Look for a new package that allows you to make Venn diagrams of the differentially expressed transcripts. 
 
