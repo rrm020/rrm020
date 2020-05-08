@@ -14,72 +14,38 @@ library(debrowser)
 
 if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 
-# List the count files. You may need to change the path and pattern to match your files.
-genefilelist <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.genes.tsv", full.names=T)
-print(genefilelist)
-genefiles <- lapply(genefilelist, read_tsv)
-
-genefilenames <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.genes.tsv", full.names=F)
-genefilenames
-
-# Use grep to change the file names into shorter sample names
-samplenames <- gsub("S2_DRSC_CG8144_", "", genefilenames)
-samplenames <- gsub("S2_DRSC_","", samplenames)
-samplenames <- gsub(".genes.tsv", "", samplenames)
-samplenames <- gsub("-","_", samplenames) # DEBrowser doesn't like -
-samplenames <- trimws(samplenames)
-samplenames
-
-# Reformat the gene files into a single data frame
-genefiles
-genefiles %>%
-  bind_cols() %>%
-  select(Name, starts_with("NumReads")) -> genetable
-
-# Rename the columns of the genetable to match the sample names
-colnames(genetable)[2:7] <- as.list(samplenames)
-
-# Check the genetable and save it
-head(genetable)
-write_tsv(genetable, path="genetable.tsv")
-
 ### Now repeat all of that for the transcript files
-
-transcriptfilelist <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.transcripts.tsv", full.names=T)
+getwd()
+transcriptfilelist <- list.files(pattern="*abundance.tsv", full.names=T, recursive= TRUE)
 transcriptfiles <- lapply(transcriptfilelist, read_tsv)
-transcriptfilenames <- list.files(path="02-Assignments/Project03/SARTools", pattern="*.transcripts.tsv", full.names=F)
+transcriptfilenames <- list.files(pattern="*abundance.tsv", full.names=F, recursive=TRUE)
 
-samplenames <- gsub("S2_DRSC_CG8144_", "", transcriptfilenames)
-samplenames <- gsub("S2_DRSC_","", samplenames)
-samplenames <- gsub(".transcripts.tsv", "", samplenames)
+samplenames <- gsub("SRP100701/kallisto/", "", transcriptfilenames)
+samplenames <- gsub("SRP100701/kallisto/","", samplenames)
+samplenames <- gsub(".abundance.tsv", "", samplenames)
 samplenames <- gsub("-","_", samplenames) # DEBrowser doesn't like -
 samplenames <- trimws(samplenames)
 samplenames
 
 transcriptfiles %>%
   bind_cols() %>%
-  select(Name, starts_with("NumReads")) -> transcripttable
-colnames(transcripttable)[2:7] <- as.list(samplenames)
+  dplyr::select(target_id, starts_with("est_counts")) -> transcripttable
+colnames(transcripttable)[2:13] <- as.list(samplenames)
 
 head(transcripttable)
 str(transcripttable)
 write_tsv(transcripttable, path="transcripttable.tsv")
+transcripttable
 
-## Also need to reformat the target.txt file to match the sample names
-transcripts_target <- read_delim("02-Assignments/Project03/SARTools/transcripts.target.txt", 
+transcripts_target <- read_delim("hypothalamus_only.tsv", 
                                  "\t", escape_double = FALSE, trim_ws = TRUE)
 transcripts_target
-colnames(transcripttable) <- gsub("-","_", colnames(transcripttable))
-colnames(transcripttable)
-transcripts_target$label[1:3] <- colnames(transcripttable)[5:7]
-transcripts_target$label[4:6] <- colnames(transcripttable)[2:4]
-metadata <- select(transcripts_target, c(label, batch, Treatment))
-colnames(metadata) <- c("sample","batch","condition")
-write_tsv(metadata, path="metadata.tsv")
-metadata
-
-colnames(transcripttable)[2:7] == metadata$sample
-
+colnames(transcripts_target) <- gsub("-","_", colnames(hypothalamus_only))
+colnames(transcripts_target)
+transcripts_target$Sample_Name_s[1:12] <- colnames(transcripttable)[2:13]
+metadata <- dplyr::select(transcripts_target, c(Sample_Name_s, treatment_s, gender_s))
+colnames(metadata) <- c("run","treatment","gender")
+write_tsv(metadata, path="Finalmetadata.tsv")
 
 # 4. Start DEBrowser
 
