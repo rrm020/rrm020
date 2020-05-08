@@ -172,8 +172,19 @@ These results were then downloaded into the "treatment_plotsDEBrowser"
 
 ## (3) Summarize your differential expression analysis
 
-Dexamethasone clearly causes differential expression. There were 67 significantly up-regulated genes and 242 significantly down-regulated genes, which are effectively visualized in this volcano plot:34
+Dexamethasone clearly causes differential expression. The significant up and down regulated genes are shown clearly in the volcano plot. There are 67 significantly up regulated genes and 242 significantly down regulated genes based on the Volcano plot generated.
+```{r}
+knitr::include_graphics("treatment_plotsDEBrowser/volcano.png")
+```
+There is differential gene expression between treatment groups which is important to recognize for any further analysis.
 
+Another important part of the analysis is batch correcting. I downloaded the PCA plots before and after the batch correction and the differences are quite notable:
+```{r}
+knitr::include_graphics("treatment_plotsDEBrowser/prebatch.png")
+
+knitr::include_graphics("treatment_plotsDEBrowser/postbatch.png")
+```
+As you can see the pre-batch corrected version is separated by sex which is not helpful to our analysis, but after there are corrections made you can see that its determined by treatment which clearly illustrates there is a difference between the treatments.
 
 # Takehome Final Part 2
 
