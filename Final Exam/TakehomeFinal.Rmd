@@ -48,7 +48,7 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 * [X] Manipulate metadata to produce files required to run DEBrowser
 * [X] Examination of batch effect caused by sex
 * [X] Determination of differential expression caused by treatment
-* [ ] Answering questions about best practices for data analysis
+* [X] Answering questions about best practices for data analysis
 
 ## Honor Code
 
