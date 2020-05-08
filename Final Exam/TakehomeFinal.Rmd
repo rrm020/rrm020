@@ -150,11 +150,10 @@ write_tsv(hypothalamus_only, path="hypothalamus_only.tsv")
 First look to see if there are major differences in gene expression based on sex.
 Adapt the appropriate script from the RNASeqProject to analyze transcript-level differential expression. 
 
-Do not include the R script in this Markdown, instead provide a link to it and run it separately: [R script](script.R).
-
-For SARTools, link to the final report in this file [SARTools Report](reports/DESeq2_report.html).
-
-For DEBrowser, provide a list of all of the settings that you altered to perform the analysis and export the key figures from the web page.
+Methods used in DEBrowser:
+- filter: CPM<1 in at least 3 samples
+- DE analysis: condition 1 = female, condition 2 = male
+- results: padj = 0.05
 
 ### Treatment effects on transcript expression
 
