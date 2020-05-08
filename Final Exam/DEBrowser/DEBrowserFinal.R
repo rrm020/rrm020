@@ -40,11 +40,11 @@ transcripttable
 transcripts_target <- read_delim("hypothalamus_only.tsv", 
                                  "\t", escape_double = FALSE, trim_ws = TRUE)
 transcripts_target
-colnames(transcripts_target) <- gsub("-","_", colnames(hypothalamus_only))
-colnames(transcripts_target)
+colnames(transcripttable) <- gsub("-","_", colnames(transcripttable))
+colnames(transcripttable)
 transcripts_target$Sample_Name_s[1:12] <- colnames(transcripttable)[2:13]
 metadata <- dplyr::select(transcripts_target, c(Sample_Name_s, treatment_s, gender_s))
-colnames(metadata) <- c("run","treatment","gender")
+colnames(metadata) <- c("sample","treatment","gender")
 write_tsv(metadata, path="Finalmetadata.tsv")
 
 # 4. Start DEBrowser
