@@ -145,13 +145,15 @@ hypothalamus_only <- read_tsv("SRP100701.sample_table.txt") %>%  dplyr::filter(t
 write_tsv(hypothalamus_only, path="hypothalamus_only.tsv")
 ```
 
-
 ### Sex-differences in transcript expression
 
 First look to see if there are major differences in gene expression based on sex.
 Adapt the appropriate script from the RNASeqProject to analyze transcript-level differential expression. 
+
 Do not include the R script in this Markdown, instead provide a link to it and run it separately: [R script](script.R).
+
 For SARTools, link to the final report in this file [SARTools Report](reports/DESeq2_report.html).
+
 For DEBrowser, provide a list of all of the settings that you altered to perform the analysis and export the key figures from the web page.
 
 ### Treatment effects on transcript expression
