@@ -127,7 +127,7 @@ tail(abundance49)
 ```
 the counts and numbers all look good and all values for est counts and tpm are 0s and other coloumns don't have NAs present, but the values for each differ.
 
-## (2) Run SARTools or DEBrowser
+## (2) Run SARTools or DEBrowser (I picked DEBrowser)
 
 Use DESeq2 for your analysis (although you are welcome to compare the results to edgeR).
 Use an FDR cutoff of 0.05 to determine differential expression (and also leave other settings in SARTools at their default values).
