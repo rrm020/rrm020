@@ -1,7 +1,7 @@
 ---
 title: "Takehome Final"
 author: "Riley McDonnell"
-date: "27 Apr 2020"
+date: "6 May 2020"
 output:
   github_document:
     toc: true
@@ -200,16 +200,14 @@ Describe the 3 most important suggestions that would incorporate best practices 
 
 ### Suggestion 1:
 
-
+Figure 1 and 2 are pie charts, which is fine in some scenarios but in this example I think the data could be organized in a clearer graphic. Pie charts also heavily use colors and what if the reader is colorblind. Maybe that's a stretch for why you shouldn't use pie charts, but I think a bar or boxplot could clearly depict the data in an easier, and more informative way.
 
 ### Suggestion 2:
 
-They should use multiple pipelines/analyses and compare the results. In this class we have learned that there is a lot of variation in the outputs of these tools, so they should use multiple piplines to check for difference and note which they believed to be the best for their analysis.
+There is a lot of information which seems to never be explained, and I think it would be near impossible to attempt to replicate this paper. For example many of the sample sizes never have criteria explained for why they chose that size. And even the settings used for the mapping and DE analysis were not explained, which limits the possibility for recreating their results or even manipulating other data sets to attempt their experiment. 
 
 ### Suggestion 3:
-
-
-
+Publish their code or put this link to the code somewhere. It's much easier to understand how the results they generated or even how they manipulated the raw data when you can also see the code. Plus this makes it much easier for anyone to recreate the analysis with slightly different data if they know the general blueprint for the analysis.  
 
 ## Q3: Research Practices
 
@@ -220,12 +218,14 @@ Describe how you would handle each of the following scenarios, citing specific Q
 You are concerned that two of the samples may have been switched during sample preparation. 
 What is your confidence that this did or did not occur?
 
+If it did occur and there were no other indicators such as gender, treatment, or tissue type such as this experiment I would need to start over. That's not always possible with deadlines and finances so then I would continue my experiment and hope that if they were switched I could use my data to determine this and then make notes and exclude it from the results. I don't think this is a specific QRP, but people should be very careful and take all steps needed to not confuse samples because it could ruin the data.
 
 
 ### Scenario 2:
 Your advisor is disappointed with the number of differentially expressed transcripts that you found in the female vs male comparison.
 They suggest that you should send additional samples out for sequencing and add them to this study to increase the statistical power.
 
+This would be p-hacking because you are looking for ways to improve your data after finding the results. If you are going through with this you would need to analyze them separately because putting the two batches together wouldn't be producing honest data.
 
 
 ### Scenario 3:
@@ -233,9 +233,13 @@ The transcripts that are differentially expressed between vehicle and dexamethas
 Your advisor suggests re-running the analysis using the model counts ~ sex * treatment instead of the model counts ~ sex + treatment.
 (Note that SARTools cannot handle GLM interactions and this would have to be done with DESeq2 in R.)
 
+Once again a type of p-hacking. I this case I would not allow that to happen even if my advisor wanted it. The different results do not mean we need to generate data just to confirm previous results, that's not how honest science works. Run both models and include both if you write about them and suggest why errors may have occurred. Picking data or models that best suits the results you want is not helpful, nor is it honest.
 
 ## Date/Time completed:
+5/5/2020
 
 # Acknowledgements
+https://debrowser.readthedocs.io/en/master/quickstart/quickstart.html
 
-Cite online sources used.
+https://bioconductor.org/packages/release/bioc/vignettes/debrowser/inst/doc/DEBrowser.html
+
