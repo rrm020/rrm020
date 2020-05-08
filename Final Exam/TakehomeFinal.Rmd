@@ -40,16 +40,14 @@ if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 # tidyverse is needed for ggplot2, readr, and dplyr
 # Always load tidyverse last so that its functions will not get masked by other packages
 
-if (!require("cowplot")) install.packages("cowplot"); library(cowplot)
-# nakes good looking graphs and figures
 ```
 
 ## Objectives for Final Exam
 
-* [ ] Checking downloaded data for accuracy
-* [ ] Manipulate metadata to produce files required to run SARTools
-* [ ] Examination of batch effect caused by sex
-* [ ] Determination of differential expression caused by treatment
+* [X] Checking downloaded data for accuracy
+* [X] Manipulate metadata to produce files required to run DEBrowser
+* [X] Examination of batch effect caused by sex
+* [X] Determination of differential expression caused by treatment
 * [ ] Answering questions about best practices for data analysis
 
 ## Honor Code
@@ -125,7 +123,7 @@ abundance49 <- read_tsv("SRP100701/kallisto/SRR5285049/abundance.tsv")
 head(abundance49)
 tail(abundance49)
 ```
-the counts and numbers all look good and all values for est counts and tpm are 0s and other coloumns don't have NAs present, but the values for each differ.
+the counts and numbers all look good and all values for est counts and tpm are 0s and other columns don't have NAs present, but the values for each differ.
 
 ## (2) Run SARTools or DEBrowser (I picked DEBrowser)
 
@@ -150,9 +148,9 @@ write_tsv(hypothalamus_only, path="hypothalamus_only.tsv")
 This can be found in the DEBrowser file.
 
 Methods used in DEBrowser:
-- filter: CPM<1 in at least 3 samples
-- DE analysis: condition 1 = female, condition 2 = male
-- results: padj = 0.05
+* filter: CPM<1 in at least 3 samples
+* DE analysis: condition 1 = female, condition 2 = male
+* results: padj = 0.05
 
 After running that I downloaded my plots into the folder "sex_plotsDEBrowser"
 
@@ -163,10 +161,10 @@ Then I used a batch effect to correct for sex-differences and to look for transc
 This can be found in the DEBrowser file.
 
 Methods used in DEBrowser:
-- filter: CPM<1 in at least 3 samples
-- batch correction: TMM normalization method, Combat correction method, treatment = treatment_s, batch = gender_s
-- DE analysis: condition 1 = Dexamethasone, condition 2 = Vehicle
-- results: padj = 0.05.
+* filter: CPM<1 in at least 3 samples
+* batch correction: TMM normalization method, Combat correction method, treatment = treatment_s, batch = gender_s
+* DE analysis: condition 1 = Dexamethasone, condition 2 = Vehicle
+* results: padj = 0.05.
 
 These results were then downloaded into the "treatment_plotsDEBrowser"
 
@@ -188,14 +186,12 @@ As you can see the pre-batch corrected version is separated by sex which is not 
 
 # Takehome Final Part 2
 
-If you are unable to complete Part 1 of the exam, then you will need to submit it to your repo as TakehomeFinal.Incomplete.Rmd.
-At that point, you will need to @KField-Bucknell in an issue to request access to the files that you need. 
-I will be granting access to the files up until 10am EDT on May 6th.
-
 ## Q1: Comparison to previous analysis
 
 You would like to know if your results are consistent with those described in the Frahm et al. paper. [Frahm et al.](Frahm_etal.pdf)
 You do not have to carry out the comparison, but briefly describe (3-4 sentences) the process that you would need to follow to answer this (not so simple) question.
+
+I think the best way to confirm my results with the paper's results would be to look at the names of the genes I used and then look at the genes in their data. After looking at the gene names I could figure out a way to sort by the gene names so I could see my results and the Frahm et al. results. Using r I could see the full data sets and manipulate the data sets to see specific column names and compare the results. Minor issues would likely be attributed the the pipelines used because even in our class between people there were tiny changes in reads. Larger discrepancies would likely mean they are not consistent and you need to change something, you could look at their raw data and see what steps they took and attempt to replicate with the data you have.
 
 ## Q2: Improvements to Frahm et al.
 
@@ -208,7 +204,7 @@ Describe the 3 most important suggestions that would incorporate best practices 
 
 ### Suggestion 2:
 
-
+They should use multiple pipelines/analyses and compare the results. In this class we have learned that there is a lot of variation in the outputs of these tools, so they should use multiple piplines to check for difference and note which they believed to be the best for their analysis.
 
 ### Suggestion 3:
 
