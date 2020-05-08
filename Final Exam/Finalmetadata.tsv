@@ -1,4 +1,4 @@
-run	treatment	gender
+sample	treatment	gender
 SRR5285048	Dexamethasone	male
 SRR5285049	Vehicle	male
 SRR5285050	Dexamethasone	female
