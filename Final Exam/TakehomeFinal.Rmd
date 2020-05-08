@@ -147,26 +147,32 @@ write_tsv(hypothalamus_only, path="hypothalamus_only.tsv")
 
 ### Sex-differences in transcript expression
 
-First look to see if there are major differences in gene expression based on sex.
-Adapt the appropriate script from the RNASeqProject to analyze transcript-level differential expression. 
+This can be found in the DEBrowser file.
 
 Methods used in DEBrowser:
 - filter: CPM<1 in at least 3 samples
 - DE analysis: condition 1 = female, condition 2 = male
 - results: padj = 0.05
 
+After running that I downloaded my plots into the folder "sex_plotsDEBrowser"
+
 ### Treatment effects on transcript expression
 
-Use batch to correct for sex-differences and then look for transcripts that are differentially expressed based on dexamethasone treatment.
+Then I used a batch effect to correct for sex-differences and to look for transcripts that are differentially expressed based on dexamethasone treatment.
+
+This can be found in the DEBrowser file.
+
+Methods used in DEBrowser:
+- filter: CPM<1 in at least 3 samples
+- batch correction: TMM normalization method, Combat correction method, treatment = treatment_s, batch = gender_s
+- DE analysis: condition 1 = Dexamethasone, condition 2 = Vehicle
+- results: padj = 0.05.
+
+These results were then downloaded into the "treatment_plotsDEBrowser"
 
 ## (3) Summarize your differential expression analysis
 
-Your advisor wants to know whether you found any effect of treatment. 
-Provide a concise summary of your analysis, including up to 3 figures from your SARTools analysis.
-
-```{r Example figure}
-knitr::include_graphics("../09-FinalProject/results/figures/fig1.png")
-```
+Dexamethasone clearly causes differential expression. There were 67 significantly up-regulated genes and 242 significantly down-regulated genes, which are effectively visualized in this volcano plot:34
 
 
 # Takehome Final Part 2
